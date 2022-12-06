@@ -1,0 +1,60 @@
+{
+  "name": "node-red-kube-red",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "npx gulp build",
+    "clean": "npx gulp clean",
+    "nodered": "npx gulp nodered"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^9.0.2",
+    "@rollup/stream": "^2.0.0",
+    "@types/browser-sync": "^2.26.3",
+    "@types/gulp": "^4.0.9",
+    "@types/gulp-concat": "^0.0.33",
+    "@types/gulp-header": "^2.0.1",
+    "@types/gulp-htmlmin": "^1.3.32",
+    "@types/gulp-nodemon": "^0.0.34",
+    "@types/gulp-rename": "^2.0.1",
+    "@types/gulp-sourcemaps": "^0.0.35",
+    "@types/gulp-uglify": "^3.0.7",
+    "@types/merge-stream": "^1.1.2",
+    "@types/node": "^18.11.9",
+    "@types/node-red": "^1.2.1",
+    "@types/nodemon": "^1.19.2",
+    "@types/vinyl-source-stream": "^0.0.30",
+    "browser-sync": "^2.27.10",
+    "del": "^6.1.0",
+    "gulp": "^4.0.2",
+    "gulp-buffer": "^0.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-flatmap": "^1.0.2",
+    "gulp-header": "^2.0.9",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-include": "^2.4.1",
+    "gulp-mode": "^1.1.0",
+    "gulp-nodemon": "^2.5.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify": "^3.0.2",
+    "gulp-wrap": "^0.15.0",
+    "merge-stream": "^2.0.0",
+    "node-red": "^3.0.2",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "node-red": {
+    "nodes": {
+      "kube-red": "dist/kube-red.js"
+    }
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.17.1"
+  }
+}
