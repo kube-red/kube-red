@@ -1,25 +1,18 @@
 <div class="form-row">
-    <label for="node-input-incluster"><i class="fa fa-tag"></i> InCluster</label>
-    <input type="checkbox" id="node-input-incluster" incluster="checked">
-</div>
-
-<div class="form-row">
-    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</span></label>
     <input type="text" id="node-input-name">
 </div>
 
 <div class="form-row">
-    <label for="node-input-server"><i class="fa fa-tag"></i> Server</label>
-    <input type="text" id="node-input-server">
+    <label for="node-input-active"><i class="fa fa-check-square"></i> Active</label>
+    <input type="checkbox" checked value="true" id="node-input-active" style="display: inline-block; width: auto; vertical-align: top;"/>
 </div>
 
-<div class="form-row">
-    <label for="node-input-user"><i class="fa fa-tag"></i> User</label>
-    <input type="text" id="node-input-user">
+<div class="form-row" style="margin-bottom:0;">
+    <label><i class="fa fa-list"></i> Config</span></label>
 </div>
 
-<div class="form-row">
-    <label for="node-input-password"><i class="fa fa-tag"></i> Password</label>
-    <input type="text" id="node-input-password">
+<div class="form-row node-input-config-container-row">
+    <ol id="node-input-config-container"></ol>
 </div>
 
