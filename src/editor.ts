@@ -1,5 +1,5 @@
 import { EditorRED } from "node-red";
-import ClusterEditor from "./cluster-config/editor";
+import ClusterEditorBasic from "./cluster-config-basic/editor";
 import LowerCaseEditor from "./lower-case/editor";
 import NamespaceEditor from "./namespace/editor";
 
@@ -13,6 +13,6 @@ declare const RED: EditorRED;
 //     RED.nodes.registerType("pods", PodsEditor);
 // }
 
-RED.nodes.registerType("cluster-config", ClusterEditor);
+RED.nodes.registerType("cluster-config-basic", ClusterEditorBasic);
 RED.nodes.registerType("lower-case", LowerCaseEditor);
 RED.nodes.registerType("namespace", NamespaceEditor);

@@ -5,22 +5,22 @@ declare const RED: EditorRED;
 
 const defaultClusterConfig: ClusterConfig = {
     type: "flow", // Type is either flow or global
-    name: "", // Name is used as the context name
+    typeValue: "", // Name is used as the context name
 
     incluster: "false",
+    clustername: "",
     server: "",
     user: "",
     password: "",
 }
 
-export interface ClusterConfigEditorProperties extends EditorNodeProperties {
+export interface ClusterConfigBasicEditorProperties extends EditorNodeProperties {
     name: string;
     active: boolean;
     config: ClusterConfig[];
-
 }
 
-const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
+const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties> = {
     category: 'function',
     color: '#7C9A8C',
     defaults: {
@@ -28,10 +28,9 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
         active: {value: true},
         config: {value: [defaultClusterConfig]},
     },
-    inputs:1,
-    outputs:0,
+    inputs:0,
+    outputs:1,
     icon: "file.png",
-    inputLabels: "trigger",
     label: function() {
         return this.name||"cluster-config";
     },
@@ -41,6 +40,7 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
             config.find('.red-ui-typedInput').typedInput("width",newWidth-150);
 
         }
+        // very verbose but it works for now :shrug:
         $('#node-input-config-container').css('min-height','300px').css('min-width','450px').editableList({
             addItem: function(container: JQuery<HTMLElement>, i:number, property: ClusterConfig) {
                 var row1 = $('<div/>').appendTo(container);
@@ -50,21 +50,24 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
                 var row5 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
                 var row6 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
 
+                // this is used to set either flow or global context. Type is flow type and `value` is variable name used in context
                 $('<label/>',{for:"node-input-config-property-type",style:"width:110px; margin-right:10px;"}).text("Property").appendTo(row1);
-                var propertyType = $('<input/>',{style:"width:250px",class:"node-input-config-property-name",type:"text"})
+                var propertyType = $('<input/>',{style:"width:250px",class:"node-input-config-property-type",type:"text"})
                     .appendTo(row1)
                     .typedInput({types:['flow','global']});
 
-                $('<label/>',{for:"node-input-config-property-name",style:"width:110px; margin-right:10px;"}).text("Name").appendTo(row2);
-                var propertyName = $('<input/>',{style:"width:250px",class:"node-input-config-property-name",type:"text"})
-                    .appendTo(row2)
-                    .typedInput({types:['str']});
-
-                $('<label/>',{for:"node-input-config-property-incluster",style:"width:110px; margin-right:10px;"}).text("InCluster").appendTo(row3);
+                // all these are just variables that are used to construct kubeconfig. They are mostly strings and not used in context.
+                // TODO: validate those
+                // TODO: Construct kubeconfig in controller before setting to context
+                $('<label/>',{for:"node-input-config-property-incluster",style:"width:110px; margin-right:10px;"}).text("InCluster").appendTo(row2);
                 var propertyInCluster = $('<input/>',{style:"width:250px",class:"node-input-config-property-incluster",type:"checkbox"})
-                    .appendTo(row3)
+                    .appendTo(row2)
                     .typedInput({types:['bool']});
 
+                $('<label/>',{for:"node-input-config-property-clustername",style:"width:110px; margin-right:10px;"}).text("Cluster Name").appendTo(row3);
+                var propertyClustername = $('<input/>',{style:"width:250px",class:"node-input-config-property-clustername",type:"text"})
+                    .appendTo(row3)
+                    .typedInput({types:['str']});
 
                 $('<label/>',{for:"node-input-config-property-server",style:"width:110px; margin-right:10px;"}).text("Server").appendTo(row4);
                 var propertyServer = $('<input/>',{style:"width:250px",class:"node-input-config-property-server",type:"text"})
@@ -83,18 +86,20 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
 
 
 
-                propertyType.typedInput('value',property.type);
+                propertyType.typedInput('value', property.typeValue);
                 propertyType.typedInput('type',property.type);
-                propertyName.typedInput('value',property.name);
-                propertyName.typedInput('type',property.name);
+
                 propertyInCluster.typedInput('value',property.incluster);
                 propertyInCluster.typedInput('type',property.incluster);
+                propertyClustername.typedInput('value',property.clustername);
+                propertyClustername.typedInput('type',property.clustername);
+
                 propertyServer.typedInput('value',property.server);
                 propertyServer.typedInput('type',property.server);
-                propertyUser.typedInput('value',property.server);
-                propertyUser.typedInput('type',property.server);
-                propertyPassword.typedInput('value',property.server);
-                propertyPassword.typedInput('type',property.server);
+                propertyUser.typedInput('value',property.user);
+                propertyUser.typedInput('type',property.user);
+                propertyPassword.typedInput('value',property.password);
+                propertyPassword.typedInput('type',property.password);
 
                 var newWidth = $("#node-input-config-container").width();
                 resizeConfig(container);
@@ -109,13 +114,15 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
     oneditsave: function() {
         var properties = $("#node-input-config-container").editableList('items');
         var node = this;
-        node.config = [];
         properties.each(function(i) {
             var property = $(this);
+            node.config = []
             var p: ClusterConfig = {
-                type: property.find(".node-input-config-property-type").typedInput('value'),
-                name: property.find(".node-input-config-property-name").typedInput('value'),
+                type: property.find(".node-input-config-property-type").typedInput('type'),
+                typeValue: property.find(".node-input-config-property-type").typedInput('value'),
+
                 incluster: property.find(".node-input-config-property-incluster").typedInput('value'),
+                clustername: property.find(".node-input-config-property-clustername").typedInput('value'),
                 server: property.find(".node-input-config-property-server").typedInput('value'),
                 user: property.find(".node-input-config-property-user").typedInput('value'),
                 password: property.find(".node-input-config-property-password").typedInput('value'),
@@ -147,4 +154,4 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
     }
 }
 
-export default ClusterConfigEditor;
+export default ClusterConfigBasicEditor;

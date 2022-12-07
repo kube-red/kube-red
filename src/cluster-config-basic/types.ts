@@ -1,7 +1,8 @@
 export interface ClusterConfig {
     type: string;
-    name: string;
+    typeValue: string;
     incluster: string;
+    clustername: string;
     server: string;
     user: string;
     password: string;
