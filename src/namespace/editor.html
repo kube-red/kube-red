@@ -1,14 +1,28 @@
 <div class="form-row">
-    <label for="node-input-cluster"><i class="fa fa-tag"></i> Cluster</label>
-    <input type="cluster-config" id="node-input-cluster">
-</div>
-
-<div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-input-name" placeholder="Name">
 </div>
 
 <div class="form-row">
-    <label for="node-input-namespacename"><i class="fa fa-tag"></i> Namespace Name</label>
-    <input type="text" id="node-input-prefix" placeholder="default">
+    <label for="node-input-active"><i class="fa fa-check-square"></i> Active</label>
+    <input type="checkbox" checked value="true" id="node-input-active" style="display: inline-block; width: auto; vertical-align: top;"/>
+</div>
+
+<div class="form-row" style="margin-bottom:0;">
+    <label><i class="fa fa-list"></i> Cluster</span></label>
+</div>
+
+<div class="form-row node-input-config-container-row">
+    <label for="node-input-clustername"><i class="fa fa-check-square"></i> Cluster</label>
+    <input type="text" value="kubeconfig" id="node-input-clustername" style="display: inline-block; width: auto; vertical-align: top;"/>
+</div>
+
+
+<div class="form-row" style="margin-bottom:0;">
+    <label><i class="fa fa-list"></i> Namespace</span></label>
+</div>
+
+<div class="form-row">
+    <label for="node-input-namespacename"><i class="fa fa-check-square"></i> Active</label>
+    <input type="text" value="default" id="node-input-namespacename" style="display: inline-block; width: auto; vertical-align: top;"/>
 </div>

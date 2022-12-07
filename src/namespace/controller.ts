@@ -1,26 +1,25 @@
 import { NodeDef, NodeAPI, Node, NodeMessageInFlow } from "node-red";
-import { ClusterConfigProperties } from "../cluster-config/controller";
-
+import * as k8s from '@kubernetes/client-node';
+import NamespaceConfig from "./types";
 export interface NamespaceProperties extends NodeDef {
-    cluster: ClusterConfigProperties;
-    namespacename: string;
+    config: NamespaceConfig;
 }
 
 class NamespaceController {
     node: Node;
-    cluster: ClusterConfigProperties;
-    namespacename: string;
+    config: NamespaceConfig;
+    kc: k8s.KubeConfig;
 
     constructor(node: Node, RED: NodeAPI, config: NamespaceProperties) {
-        node.on('input', this.onInput.bind(this));
         this.node = node;
-        this.namespacename = config.namespacename;
-        var confignode = RED.nodes.getNode("cluter-config");
-        console.log("confignode: " + confignode);
+        this.config = config.config;
+
+        node.on('input', this.onInput.bind(this));
     }
 
     onInput(msg: NodeMessageInFlow) {
-        console.log("namespace: " + this.namespacename);
+        console.log(this.config);
+        var kc = this.node.context().global.get("kubeconfig")
     }
 }
 
