@@ -1,10 +1,8 @@
 import { NodeDef, NodeAPI, Node, NodeMessageInFlow } from "node-red";
-import registerClusterConfig from "./cluster-config-basic/controller";
-import registerLowerCase from "./lower-case/controller";
-import registerNamespace from "./namespace/controller";
+import registerClusterConfig from "./cluster-config/controller";
+import registerNamespace from "./create-namespace/controller";
 
 export default function (RED: NodeAPI) {
-    registerLowerCase(RED);
     registerClusterConfig(RED);
     registerNamespace(RED);
 }

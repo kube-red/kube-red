@@ -1,11 +1,11 @@
 import {EditorRED, EditorNodeDef, EditorNodeProperties } from 'node-red';
-import ClusterConfig from './types';
+import {ClusterConfig, Controller} from './types';
 
 declare const RED: EditorRED;
 
 const defaultClusterConfig: ClusterConfig = {
-    type: "flow", // Type is either flow or global
-    typeValue: "", // Name is used as the context name
+    sourcetype: "flow", // Type is either flow or global
+    sourceclustername: "", // Name is used as the context name
 
     incluster: "false",
     clustername: "",
@@ -32,7 +32,7 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
     outputs:1,
     icon: "file.png",
     label: function() {
-        return this.name||"cluster-config";
+        return this.name||Controller.name;
     },
     oneditprepare: function() {
         function resizeConfig(config: JQuery<HTMLElement>) {
@@ -65,7 +65,7 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
                     .typedInput({types:['bool']});
 
                 $('<label/>',{for:"node-input-config-property-clustername",style:"width:110px; margin-right:10px;"}).text("Cluster Name").appendTo(row3);
-                var propertyClustername = $('<input/>',{style:"width:250px",class:"node-input-config-property-clustername",type:"text"})
+                var propertyClusterName = $('<input/>',{style:"width:250px",class:"node-input-config-property-clustername",type:"text"})
                     .appendTo(row3)
                     .typedInput({types:['str']});
 
@@ -86,13 +86,13 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
 
 
 
-                propertyType.typedInput('value', property.typeValue);
-                propertyType.typedInput('type',property.type);
+                propertyType.typedInput('value', property.sourceclustername);
+                propertyType.typedInput('type',property.sourcetype);
 
                 propertyInCluster.typedInput('value',property.incluster);
                 propertyInCluster.typedInput('type',property.incluster);
-                propertyClustername.typedInput('value',property.clustername);
-                propertyClustername.typedInput('type',property.clustername);
+                propertyClusterName.typedInput('value',property.clustername);
+                propertyClusterName.typedInput('type',property.clustername);
 
                 propertyServer.typedInput('value',property.server);
                 propertyServer.typedInput('type',property.server);
@@ -118,8 +118,8 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
             var property = $(this);
             node.config = []
             var p: ClusterConfig = {
-                type: property.find(".node-input-config-property-type").typedInput('type'),
-                typeValue: property.find(".node-input-config-property-type").typedInput('value'),
+                sourcetype: property.find(".node-input-config-property-type").typedInput('type'),
+                sourceclustername: property.find(".node-input-config-property-type").typedInput('value'),
 
                 incluster: property.find(".node-input-config-property-incluster").typedInput('value'),
                 clustername: property.find(".node-input-config-property-clustername").typedInput('value'),

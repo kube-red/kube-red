@@ -1,8 +1,7 @@
 import { throws } from "assert";
 import { NodeDef, NodeAPI, Node, NodeMessageInFlow } from "node-red";
 import * as k8s from '@kubernetes/client-node';
-import { message } from "gulp-typescript/release/utils";
-import ClusterConfig from './types';
+import {ClusterConfig, Controller} from './types';
 
 export interface ClusterConfigBasicProperties extends NodeDef {
     name: string;
@@ -25,16 +24,14 @@ class ClusterConfigBasicController {
         this.config = config.config;
         this.active = config.active;
 
-        node.on('input', this.onInput.bind(this));
-
         // set configure function
         this.configure = function() {
             // iterate over each config
-            this.config.forEach( function(c) {
+            this.config.forEach( function(c: ClusterConfig) {
                 // construct kubeconfig and set to context for each config in node
-                const kc = new k8s.KubeConfig();
+                var kc = new k8s.KubeConfig();
                 if (c.incluster == "true") {
-                    kc.loadFromCluster();
+                    kc.loadFromDefault();
                 } else {
                     const cluster = {
                         name: c.clustername,
@@ -59,24 +56,16 @@ class ClusterConfigBasicController {
                     });
                 }
 
-                if (c.type == "flow") {
-                    node.context().flow.set(c.typeValue,kc);
-                } else if (c.type == "global") {
-                    node.context().global.set(c.typeValue,kc);
+                if (c.sourcetype == "flow") {
+                    node.context().flow.set(c.sourceclustername,kc);
+                } else if (c.sourcetype == "global") {
+                    node.context().global.set(c.sourceclustername,kc);
                 }
             });
         }
 
         this.configure();
     }
-
-    onInput(msg: NodeMessageInFlow) {
-        // if active is true, then configure
-        if (this.active == true) {
-            this.configure();
-        }
-    }
-
 }
 
 // loaded on startup
@@ -85,20 +74,5 @@ export default function (RED: NodeAPI) {
         RED.nodes.createNode(this, config);
         new ClusterConfigBasicController(this, RED, config);
     }
-    RED.nodes.registerType("cluster-config-basic", ClusterConfigBasicNode);
-
-   /* RED.httpAdmin.post("/config/:id", RED.auth.needsPermission("config.write"), function(req,res) {
-        var node = RED.nodes.getNode(req.params.id);
-        if (node != null) {
-            try {
-                configure(node);
-                res.sendStatus(200);
-            } catch(err) {
-                res.sendStatus(500);
-                node.error("Config failed: "+ err.toString());
-            }
-        } else {
-            res.sendStatus(404);
-        }
-    }); */
+    RED.nodes.registerType(Controller.name, ClusterConfigBasicNode);
 }

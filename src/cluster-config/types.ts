@@ -1,6 +1,6 @@
 export interface ClusterConfig {
-    type: string;
-    typeValue: string;
+    sourcetype: string;
+    sourceclustername: string;
     incluster: string;
     clustername: string;
     server: string;
@@ -8,5 +8,8 @@ export interface ClusterConfig {
     password: string;
 }
 
+export const Controller = {
+    name: "cluster-config",
+};
 
 export default ClusterConfig;

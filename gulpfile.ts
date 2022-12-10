@@ -118,7 +118,10 @@ gulp.task("nodered", (done) => {
         watch: ["src"],
         tasks: ["build"],
         ext: "ts,html",
-        env: { NODE_ENV: "development" },
+        env: {
+            NODE_ENV: "development",
+            KUBECONFIG: process.env.KUBECONFIG,
+        },
         done: done
     })
 })
