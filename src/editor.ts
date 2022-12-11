@@ -2,9 +2,11 @@ import { EditorRED } from "node-red";
 import ClusterEditorBasic from "./cluster-config/editor";
 import * as CreateNamespaceEditor from "./create-namespace/editor";
 import * as ListNamespacesEditor from "./list-namespaces/editor";
+import * as NamespaceEditor from "./namespace/editor";
 
 import * as CreateNamespace from "./create-namespace/types";
 import * as ListNamespaces from "./list-namespaces/types";
+import * as Namespace from "./namespace/types";
 
 import * as ClusterConfig from "./cluster-config/types";
 
@@ -22,3 +24,5 @@ declare const RED: EditorRED;
 RED.nodes.registerType(ClusterConfig.Controller.name, ClusterEditorBasic);
 RED.nodes.registerType(CreateNamespace.Controller.name, CreateNamespaceEditor.default);
 RED.nodes.registerType(ListNamespaces.Controller.name, ListNamespacesEditor.default);
+
+RED.nodes.registerType(Namespace.Controller.name, NamespaceEditor.default);
