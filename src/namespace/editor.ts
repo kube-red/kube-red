@@ -28,13 +28,32 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         return this.name||Controller.name;
     },
     oneditprepare: function() {
-        function testFunction() {
-            console.log("TEST");
+        var action: string
+        function selectAction(ev: Event) {
+           var t = ev.target as HTMLSelectElement; // convert to basic element
+           var container = $('#node-input-action-configuration')
+           container.empty();
+
+           var row1 = $('<div/>').appendTo(container);
+           switch(t.value) {
+                case "create":
+                    $('<label/>',{for:"node-input-create",style:"width:110px; margin-right:10px;"}).text("Create").appendTo(row1);
+                    $('<input/>',{style:"width:250px",class:"node-input-create",type:"text"})
+                        .appendTo(row1)
+                        .typedInput({types:['global']});
+                case "delete":
+                    $('<label/>',{for:"node-input-delete",style:"width:110px; margin-right:10px;"}).text("Delete").appendTo(row1);
+                    $('<input/>',{style:"width:250px",class:"node-input-delete",type:"text"})
+                    .appendTo(row1)
+                    .typedInput({types:['str']});
+           }
+
         }
         // Cluster config container
+        // TODO: This will be shared for all nodes/resources. We should move it to a shared file
         var container = $('#node-input-config-container')
         var row1 = $('<div/>').appendTo(container);
-        $('<label/>',{for:"node-input-cluster-name",style:"width:110px; margin-right:10px;"}).text("Name").appendTo(row1);
+        $('<label/>',{for:"node-input-cluster-name",style:"width:110px; margin-right:10px;"}).text("Cluster").appendTo(row1);
         var propertyType = $('<input/>',{style:"width:250px",class:"node-input-cluster-name",type:"text"})
             .appendTo(row1)
             .typedInput({types:['global']});
@@ -43,26 +62,25 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         $('<label/>',{for:"node-input-action",style:"width:110px; margin-right:10px;"}).text("Action").appendTo(row2);
         var propertyAction = $('<select/>',{style:"width:250px",class:"node-input-action",
         // Add event listener to render the correct fields
-            onchange: function() {
-                addEventListener('change', testFunction);
+            onchange: function(ev: Event) {
+                addEventListener('change', selectAction);
             }})
         .appendTo(row2);
 
-        propertyAction.append($('<option>', {
-                value: "create",
-                text : "create",
+        var actions = ["create", "delete", "list", "get", "apply", "watch"];
+        actions.forEach(action => {
+            propertyAction.append($('<option>', {
+                value: action,
+                text : action,
             })).appendTo(row2);
-        propertyAction.append($('<option>', {
-                value: "delete",
-                text : "delete",
-            })).appendTo(row2);
-        propertyAction.append($('<option>', {
-                value: "list",
-                text : "list",
-            })).appendTo(row2);
+        });
 
         propertyType.typedInput('value',this.config.sourceClusterName);
         propertyAction.val(this.config.action);
+
+        // TODO: Preload the correct fields based on the action
+        //var action = $("#node-input-action-configuration");
+
     },
     oneditsave: function() {
         // Find client source details
