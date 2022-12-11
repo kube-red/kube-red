@@ -30,23 +30,15 @@ class NamespaceController {
             this.node.error("Kubeconfig not found");
             return;
         }
-
         console.log(kc)
-        console.log(process.env.ENV_VARIABLE)
         const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-        if (typeof msg.payload === 'string') {
-            namespace.metadata.name = msg.payload;
-            var namespace = new k8s.V1Namespace();
-            namespace.metadata = new k8s.V1ObjectMeta();
-        }
-        console.log(msg.payload)
-
-        k8sApi.createNamespace(namespace).then((res) => {
-            this.node.send({payload: res.body});
-        }
-        ).catch((err) => {
-            this.node.error(JSON.stringify(err))
-        });
+        // TODO: All label selectors
+            k8sApi.listNamespace().then((res) => {
+                var js = JSON.stringify(res.body)
+                this.node.send({payload: js});
+            }).catch((err) => {
+                this.node.error(JSON.stringify(err))
+            });
     }
 }
 
