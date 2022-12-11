@@ -8,7 +8,6 @@ export interface NamespaceEditorProperties extends EditorNodeProperties {
 }
 
 const defaultNamespaceConfig: NamespaceConfig = {
-    sourceType: "flow", // Type is either flow or global
     sourceClusterName: "", // Name is used as the context name
 }
 
@@ -34,16 +33,14 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         $('<label/>',{for:"node-input-cluster-name-property-type",style:"width:110px; margin-right:10px;"}).text("Name").appendTo(row1);
         var propertyType = $('<input/>',{style:"width:250px",class:"node-input-cluster-name-property-type",type:"text"})
             .appendTo(row1)
-            .typedInput({types:['flow','global']});
+            .typedInput({types:['global']});
 
-        propertyType.typedInput('type',this.config.sourceType);
         propertyType.typedInput('value',this.config.sourceClusterName);
     },
     oneditsave: function() {
         // Find client source details
         var property = $("#node-input-config-container");
         var node = this;
-        node.config.sourceType = property.find(".node-input-cluster-name-property-type").typedInput('type');
         node.config.sourceClusterName = property.find(".node-input-cluster-name-property-type").typedInput('value');
     },
 }

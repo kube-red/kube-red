@@ -1,5 +1,4 @@
 export interface NamespaceConfig {
-    sourceType: string;
     sourceClusterName: string;
 }
 

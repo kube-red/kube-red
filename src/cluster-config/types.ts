@@ -1,5 +1,4 @@
 export interface ClusterConfig {
-    sourcetype: string;
     sourceclustername: string;
     incluster: string;
     clustername: string;

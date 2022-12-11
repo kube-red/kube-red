@@ -55,12 +55,8 @@ class ClusterConfigBasicController {
                         currentContext: context.name,
                     });
                 }
-
-                if (c.sourcetype == "flow") {
-                    node.context().flow.set(c.sourceclustername,kc);
-                } else if (c.sourcetype == "global") {
-                    node.context().global.set(c.sourceclustername,kc);
-                }
+                console.log("Setting context for " + c.sourceclustername + " to " + kc);
+                node.context().global.set(c.sourceclustername,kc);
             });
         }
 

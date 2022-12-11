@@ -20,12 +20,7 @@ class NamespaceController {
 
     onInput(msg: NodeMessageInFlow) {
         var kc = new k8s.KubeConfig();
-        if (this.config.sourceType === "flow") {
-            kc = this.node.context().flow.get(this.config.sourceClusterName) as k8s.KubeConfig;
-        } else {
-            kc = this.node.context().global.get(this.config.sourceClusterName) as k8s.KubeConfig;
-        }
-
+        kc = this.node.context().global.get(this.config.sourceClusterName) as k8s.KubeConfig;
         if (kc === undefined) {
             this.node.error("Kubeconfig not found");
             return;

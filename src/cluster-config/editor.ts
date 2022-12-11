@@ -4,9 +4,7 @@ import {ClusterConfig, Controller} from './types';
 declare const RED: EditorRED;
 
 const defaultClusterConfig: ClusterConfig = {
-    sourcetype: "flow", // Type is either flow or global
     sourceclustername: "", // Name is used as the context name
-
     incluster: "false",
     clustername: "",
     server: "",
@@ -51,10 +49,10 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
                 var row6 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
 
                 // this is used to set either flow or global context. Type is flow type and `value` is variable name used in context
-                $('<label/>',{for:"node-input-config-property-type",style:"width:110px; margin-right:10px;"}).text("Property").appendTo(row1);
+                $('<label/>',{for:"node-input-config-property-type",style:"width:110px; margin-right:10px;"}).text("Variable").appendTo(row1);
                 var propertyType = $('<input/>',{style:"width:250px",class:"node-input-config-property-type",type:"text"})
                     .appendTo(row1)
-                    .typedInput({types:['flow','global']});
+                    .typedInput({types:['global']});
 
                 // all these are just variables that are used to construct kubeconfig. They are mostly strings and not used in context.
                 // TODO: validate those
@@ -87,19 +85,11 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
 
 
                 propertyType.typedInput('value', property.sourceclustername);
-                propertyType.typedInput('type',property.sourcetype);
-
                 propertyInCluster.typedInput('value',property.incluster);
-                propertyInCluster.typedInput('type',property.incluster);
                 propertyClusterName.typedInput('value',property.clustername);
-                propertyClusterName.typedInput('type',property.clustername);
-
                 propertyServer.typedInput('value',property.server);
-                propertyServer.typedInput('type',property.server);
                 propertyUser.typedInput('value',property.user);
-                propertyUser.typedInput('type',property.user);
                 propertyPassword.typedInput('value',property.password);
-                propertyPassword.typedInput('type',property.password);
 
                 var newWidth = $("#node-input-config-container").width();
                 resizeConfig(container);
@@ -118,9 +108,7 @@ const ClusterConfigBasicEditor: EditorNodeDef<ClusterConfigBasicEditorProperties
             var property = $(this);
             node.config = []
             var p: ClusterConfig = {
-                sourcetype: property.find(".node-input-config-property-type").typedInput('type'),
                 sourceclustername: property.find(".node-input-config-property-type").typedInput('value'),
-
                 incluster: property.find(".node-input-config-property-incluster").typedInput('value'),
                 clustername: property.find(".node-input-config-property-clustername").typedInput('value'),
                 server: property.find(".node-input-config-property-server").typedInput('value'),
