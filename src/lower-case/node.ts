@@ -26,10 +26,10 @@ class LowerCase extends Node {
 // loaded on startup
 export default function (RED: NodeAPI) {
     class LowerCaseWrapper extends LowerCase {
-		constructor(config: LowerCaseProperties) {
-			super(RED, config);
-		}
-	}
+        constructor(config: LowerCaseProperties) {
+            super(RED, config);
+        }
+    }
 
     LowerCaseWrapper.registerType(RED, "lower-case");
 }
