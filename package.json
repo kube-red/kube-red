@@ -5,13 +5,15 @@
   "scripts": {
     "build": "npx gulp build",
     "clean": "npx gulp clean",
-    "nodered": "npx gulp nodered"
+    "nodered": "npx gulp nodered",
+    "test": "mocha \"dist/**/*.test.js\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-typescript": "^9.0.2",
     "@rollup/stream": "^2.0.0",
+    "@sinonjs/fake-timers": "^10.0.0",
     "@types/browser-sync": "^2.26.3",
     "@types/gulp": "^4.0.9",
     "@types/gulp-concat": "^0.0.33",
@@ -24,6 +26,7 @@
     "@types/merge-stream": "^1.1.2",
     "@types/node": "^18.11.9",
     "@types/node-red": "^1.2.1",
+    "@types/node-red-node-test-helper": "^0.2.2",
     "@types/nodemon": "^1.19.2",
     "@types/vinyl-source-stream": "^0.0.30",
     "browser-sync": "^2.27.10",
@@ -43,7 +46,9 @@
     "gulp-uglify": "^3.0.2",
     "gulp-wrap": "^0.15.0",
     "merge-stream": "^2.0.0",
+    "mocha": "^10.2.0",
     "node-red": "^3.0.2",
+    "node-red-node-test-helper": "^0.3.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4",

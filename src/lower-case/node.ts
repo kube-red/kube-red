@@ -8,8 +8,8 @@ export interface LowerCaseProperties extends NodeDef {
 class LowerCase extends Node {
     prefix: string;
 
-    constructor(RED: NodeAPI, config: LowerCaseProperties) {
-        super(RED, config);
+    constructor(config: LowerCaseProperties) {
+        super(config);
 
         this.prefix = config.prefix;
         this.on('input', this.onInput);
@@ -25,11 +25,5 @@ class LowerCase extends Node {
 
 // loaded on startup
 export default function (RED: NodeAPI) {
-    class LowerCaseWrapper extends LowerCase {
-        constructor(config: LowerCaseProperties) {
-            super(RED, config);
-        }
-    }
-
-    LowerCaseWrapper.registerType(RED, "lower-case");
+    LowerCase.registerType(RED, "lower-case");
 }
