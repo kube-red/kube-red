@@ -2,6 +2,7 @@ import { EditorNodeDef, EditorNodeProperties } from 'node-red';
 
 export interface LowerCaseEditorProperties extends EditorNodeProperties {
     prefix: string;
+    cluster: string;
 }
 
 const LowerCaseEditor: EditorNodeDef<LowerCaseEditorProperties> = {
@@ -9,6 +10,7 @@ const LowerCaseEditor: EditorNodeDef<LowerCaseEditorProperties> = {
     color: '#a6bbcf',
     defaults: {
         name: {value:""},
+        cluster: {value: "", type: "cluster-config"},
         prefix: {value: ""}
     },
     inputs:1,

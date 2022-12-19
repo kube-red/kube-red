@@ -1,4 +1,4 @@
-import { Node, RED } from "./Node";
+import { Node, RED } from "./node";
 import { NodeDef, NodeAPI } from "node-red";
 import nodeRedNodeTestHelper from "node-red-node-test-helper";
 import { afterEach, beforeEach, describe, it } from "node:test";
