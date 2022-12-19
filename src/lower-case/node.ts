@@ -14,15 +14,14 @@ class LowerCase extends Node {
     constructor(config: LowerCaseProperties) {
         super(config);
         this.cluster = config.cluster;
-
         this.configNode = RED.nodes.getNode(config.cluster);
-
         this.prefix = config.prefix;
+
         this.on('input', this.onInput);
     }
 
     onInput(msg: NodeMessageInFlow) {
-        console.log(this.configNode.clusterName)
+        console.log(this.configNode.k8s)
         if (typeof msg.payload === 'string') {
             msg.payload = this.prefix + msg.payload.toLowerCase();
             this.send(msg);
