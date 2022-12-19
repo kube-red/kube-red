@@ -6,15 +6,18 @@ import * as k8s from '@kubernetes/client-node';
 
 export interface NamespaceProperties extends NodeDef {
     cluster: string;
+    action: string;
 }
 
 class NamespaceNode extends Node {
     cluster: string;
+    action: string;
     configNode: any;
 
     constructor(config: NamespaceProperties) {
         super(config);
         this.cluster = config.cluster;
+        this.action = config.action;
         this.configNode = RED.nodes.getNode(config.cluster);
 
         if (this.configNode === undefined) {
@@ -30,16 +33,47 @@ class NamespaceNode extends Node {
         kc.loadFromOptions(this.configNode.k8s);
 
         const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-        if (typeof msg.payload === 'string') {
-            var namespace = new k8s.V1Namespace();
-            namespace.metadata = new k8s.V1ObjectMeta();
-            namespace.metadata.name = msg.payload;
+
+        // generic object for actions
+        var namespace = new k8s.V1Namespace();
+        switch (typeof msg.payload) {
+            case 'string':
+                namespace.metadata = new k8s.V1ObjectMeta();
+                namespace.metadata.name = msg.payload;
+                break;
+            case 'object':
+                namespace = msg.payload;
+                break;
+            default:
+                this.error("Invalid payload type");
         }
 
-        k8sApi.createNamespace(namespace).then((res) => {
-            this.send({payload: res.body});
+        // switch based on action
+        console.log("action "+this.action)
+        let fn = null;
+        switch (this.action) {
+            case "create":
+                fn = k8sApi.createNamespace(namespace)
+                break;
+            case "delete":
+                fn =  k8sApi.deleteNamespace(namespace.metadata.name)
+                break;
+            case "get":
+                fn = k8sApi.readNamespace(namespace.metadata.name)
+                break;
+            case "list":
+                fn = k8sApi.listNamespace()
+                break;
+            case "patch":
+                fn = k8sApi.patchNamespace(namespace.metadata.name, namespace)
+                break;
+            default:
+                this.error("Invalid action");
         }
-        ).catch((err) => {
+
+        fn.then((res) => {
+            this.send({payload: res.body});
+        }).catch((err) => {
             console.log(err)
             this.error(JSON.stringify(err))
         });

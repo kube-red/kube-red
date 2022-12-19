@@ -1,6 +1,6 @@
 import { EditorNodeDef, EditorNodeProperties } from 'node-red';
-import {Controller} from './types';
-import  {Controller as ClusterConfigController} from '../cluster-config/types';
+import { Controller } from './types';
+import { Controller as ClusterConfigController} from '../cluster-config/types';
 
 export interface NamespaceEditorProperties extends EditorNodeProperties {
     cluster: string;
@@ -14,8 +14,8 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
     color: '#a6bbcc',
     defaults: {
         name: {value:""},
-        action: {value: "create"},
         cluster: {value: "", type: ClusterConfigController.name},
+        action: {value: "-"},
     },
     inputs:1,
     outputs:1,
@@ -24,28 +24,21 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         return this.name||Controller.name;
     },
     oneditprepare: function() {
-        var action: string
-        function selectAction(ev: Event) {
-           var t = ev.target as HTMLSelectElement; // convert to basic element
-           var container = $('#node-input-action-configuration')
-           container.empty();
+        // Example how to add a new row on action selection using switch
+        // select action and show/hide the appropriate form
+        // function selectAction(ev: Event) {
+        //  var t = ev.target as HTMLSelectElement; // convert to basic element
+        //
+        //  var container = $('#node-input-action-configuration')
+        //     container.empty();
+        //  var row1 = $('<div/>').appendTo(container);
+        //  ('<label/>',{for:"node-input-create",style:"width:110px; margin-right:10px;"}).text("Create").appendTo(row1);
+        //  ('<input/>',{style:"width:250px",class:"node-input-create",type:"text"})
+        //   .appendTo(row1)
+        //   .typedInput({types:['global']});
+        // }
 
-           var row1 = $('<div/>').appendTo(container);
-           switch(t.value) {
-                case "create":
-                    $('<label/>',{for:"node-input-create",style:"width:110px; margin-right:10px;"}).text("Create").appendTo(row1);
-                    $('<input/>',{style:"width:250px",class:"node-input-create",type:"text"})
-                        .appendTo(row1)
-                        .typedInput({types:['global']});
-                case "delete":
-                    $('<label/>',{for:"node-input-delete",style:"width:110px; margin-right:10px;"}).text("Delete").appendTo(row1);
-                    $('<input/>',{style:"width:250px",class:"node-input-delete",type:"text"})
-                    .appendTo(row1)
-                    .typedInput({types:['str']});
-           }
-        }
-        // Cluster config container
-        // TODO: This will be shared for all nodes/resources. We should move it to a shared file
+        // Action config container
         var container = $('#node-input-config-container')
 
         var row1 = $('<div/>').appendTo(container);
@@ -53,12 +46,12 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         var propertyAction = $('<select/>',{style:"width:250px",class:"node-input-action",
         // Add event listener to render the correct fields
             onchange: function(ev: Event) {
-                addEventListener('change', selectAction);
+                // event listener for example above
+                // addEventListener('change', selectAction);
             }})
         .appendTo(row1);
 
-        var actions = ["create", "delete", "list", "get", "apply", "watch"];
-        actions.forEach(action => {
+        Controller.actions.forEach(action => {
             propertyAction.append($('<option>', {
                 value: action,
                 text : action,
@@ -66,10 +59,6 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         });
 
         propertyAction.val(this.action);
-
-        // TODO: Preload the correct fields based on the action
-        //var action = $("#node-input-action-configuration");
-
     },
     oneditsave: function() {
         // Find client source details
