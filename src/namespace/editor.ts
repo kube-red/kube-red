@@ -11,15 +11,16 @@ export interface NamespaceEditorProperties extends EditorNodeProperties {
 
 const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
     category: 'kubernetes',
-    color: '#a6bbcc',
+    color: "#326DE6",
+    icon: "kubernetes_logo_40x60_white.png",
+    align: "left",
     defaults: {
         name: {value:""},
-        cluster: {value: "", type: ClusterConfigController.name},
+        cluster: {value: "", type: ClusterConfigController.name, required: true},
         action: {value: "-"},
     },
     inputs:1,
     outputs:1,
-    icon: "file.png",
     label: function() {
         return this.name||Controller.name;
     },

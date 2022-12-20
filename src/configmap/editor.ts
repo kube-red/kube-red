@@ -12,16 +12,17 @@ export interface ConfigMapEditorProperties extends EditorNodeProperties {
 
 const ConfigMapEditor: EditorNodeDef<ConfigMapEditorProperties> = {
     category: 'kubernetes',
-    color: '#a6bbcc',
+    color: "#326DE6",
+    icon: "kubernetes_logo_40x60_white.png",
+    align: "left",
     defaults: {
         name: {value:""},
-        namespace: {value:"default"},
-        cluster: {value: "", type: ClusterConfigController.name},
+        namespace: {value:""},
+        cluster: {value: "", type: ClusterConfigController.name, required: true},
         action: {value: "-"},
     },
     inputs:1,
     outputs:1,
-    icon: "file.png",
     label: function() {
         return this.name||Controller.name;
     },
@@ -30,9 +31,11 @@ const ConfigMapEditor: EditorNodeDef<ConfigMapEditorProperties> = {
         var container = $('#node-input-config-container')
 
         var row1 = $('<div/>').appendTo(container);
+        var row2 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
+
         $('<label/>',{for:"node-input-action",style:"width:110px; margin-right:10px;"}).text("Action").appendTo(row1);
-        var propertyAction = $('<select/>',{style:"width:250px",class:"node-input-action",})
-        .appendTo(row1);
+        var propertyAction = $('<select/>',{style:"width:250px",class:"node-input-action"})
+            .appendTo(row1);
 
         Controller.actions.forEach(action => {
             propertyAction.append($('<option>', {
@@ -41,20 +44,21 @@ const ConfigMapEditor: EditorNodeDef<ConfigMapEditorProperties> = {
             })).appendTo(row1);
         });
 
-        var row2 = $('<div/>').appendTo(container);
-        $('<label/>',{for:"node-input-namespace",style:"width:110px; margin-right:10px;"}).text("Namespace").appendTo(row1);
-        var propertyNamespace = $('<input/>',{style:"width:250px",class:"node-input-namespace",})
-        .appendTo(row2);
+        $('<label/>',{for:"node-input-namespace",style:"width:110px; margin-right:10px;"}).text("Namespace").appendTo(row2);
+        var propertyNamespace = $('<input/>',{style:"width:250px",class:"node-input-namespace",type:"text"})
+            .appendTo(row2)
+            .typedInput({types:['str']});
 
-        propertyNamespace.val(this.namespace);
+
+        propertyNamespace.typedInput('value', this.namespace);
+        propertyAction.val(this.action);
     },
     oneditsave: function() {
         // Find client source details
         var property = $("#node-input-config-container");
         var node = this;
         node.action = property.find(".node-input-action :selected").text();
-        node.namespace = property.find(".node-input-namespace").text();
-
+        node.namespace = property.find(".node-input-namespace").typedInput('value');
     },
 }
 

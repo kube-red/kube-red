@@ -20,6 +20,7 @@ class ConfigMapNode extends Node {
         super(config);
         this.cluster = config.cluster;
         this.action = config.action;
+        this.namespace = config.namespace;
         this.configNode = RED.nodes.getNode(config.cluster);
 
         if (this.configNode === undefined) {
@@ -40,22 +41,24 @@ class ConfigMapNode extends Node {
         var obj = new k8s.V1ConfigMap();
         switch (typeof msg.payload) {
             case 'string':
-                if (this.namespace != "") {
-                    obj.metadata = new k8s.V1ObjectMeta();
-                    obj.metadata.name = msg.payload;
-                    obj.metadata.namespace = this.namespace;
-                } else if (msg.payload.includes("/") && msg.payload.split("/").length == 2) {
-                    obj.metadata = new k8s.V1ObjectMeta();
-                    obj.metadata.name = msg.payload.split("/")[1];
-                    obj.metadata.namespace = msg.payload.split("/")[0];
-                    this.namespace = obj.metadata.namespace;
-                } else {
-                    this.error("Invalid namespace/name format or namespace not set");
+                switch (true) {
+                    // order matters here. if we have a namespace set, use it
+                    // else if the payload has a namespace, use it
+                    case (this.namespace != undefined):
+                        obj.metadata = new k8s.V1ObjectMeta();
+                        obj.metadata.name = msg.payload;
+                        obj.metadata.namespace = this.namespace;
+                        break;
+                    case (msg.payload.includes("/") && msg.payload.split("/").length == 2):
+                        obj.metadata = new k8s.V1ObjectMeta();
+                        obj.metadata.name = msg.payload.split("/")[1];
+                        obj.metadata.namespace = msg.payload.split("/")[0];
+                        this.namespace = obj.metadata.namespace;
+                        break;
+                    default:
+                        this.error("Invalid namespace/name format or namespace not set");
                     return;
                 }
-
-                obj.metadata = new k8s.V1ObjectMeta();
-                obj.metadata.name = msg.payload;
                 break;
             case 'object':
                 obj = msg.payload;
