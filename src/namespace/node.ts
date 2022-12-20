@@ -35,14 +35,14 @@ class NamespaceNode extends Node {
         const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 
         // generic object for actions
-        var namespace = new k8s.V1Namespace();
+        var obj = new k8s.V1Namespace();
         switch (typeof msg.payload) {
             case 'string':
-                namespace.metadata = new k8s.V1ObjectMeta();
-                namespace.metadata.name = msg.payload;
+                obj.metadata = new k8s.V1ObjectMeta();
+                obj.metadata.name = msg.payload;
                 break;
             case 'object':
-                namespace = msg.payload;
+                obj = msg.payload;
                 break;
             default:
                 this.error("Invalid payload type");
@@ -52,22 +52,22 @@ class NamespaceNode extends Node {
         let fn = null;
         switch (this.action) {
             case "create":
-                fn = k8sApi.createNamespace(namespace)
+                fn = k8sApi.createNamespace(obj)
                 break;
             case "delete":
-                fn =  k8sApi.deleteNamespace(namespace.metadata.name)
+                fn =  k8sApi.deleteNamespace(obj.metadata.name)
                 break;
             case "get":
-                fn = k8sApi.readNamespace(namespace.metadata.name)
+                fn = k8sApi.readNamespace(obj.metadata.name)
                 break;
             case "list":
                 fn = k8sApi.listNamespace()
                 break;
             case "patch":
-                fn = k8sApi.patchNamespace(namespace.metadata.name, namespace)
+                fn = k8sApi.patchNamespace(obj.metadata.name, obj)
                 break;
             case "update":
-                fn = k8sApi.replaceNamespace(namespace.metadata.name, namespace)
+                fn = k8sApi.replaceNamespace(obj.metadata.name, obj)
             default:
                 this.error("Invalid action");
         }
