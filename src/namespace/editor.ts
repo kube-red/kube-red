@@ -10,7 +10,7 @@ export interface NamespaceEditorProperties extends EditorNodeProperties {
 
 
 const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
-    category: 'function',
+    category: 'kubernetes',
     color: '#a6bbcc',
     defaults: {
         name: {value:""},

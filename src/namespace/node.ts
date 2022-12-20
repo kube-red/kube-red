@@ -49,7 +49,6 @@ class NamespaceNode extends Node {
         }
 
         // switch based on action
-        console.log("action "+this.action)
         let fn = null;
         switch (this.action) {
             case "create":
@@ -67,6 +66,8 @@ class NamespaceNode extends Node {
             case "patch":
                 fn = k8sApi.patchNamespace(namespace.metadata.name, namespace)
                 break;
+            case "update":
+                fn = k8sApi.replaceNamespace(namespace.metadata.name, namespace)
             default:
                 this.error("Invalid action");
         }
@@ -74,7 +75,6 @@ class NamespaceNode extends Node {
         fn.then((res) => {
             this.send({payload: res.body});
         }).catch((err) => {
-            console.log(err)
             this.error(JSON.stringify(err))
         });
     }
@@ -82,5 +82,5 @@ class NamespaceNode extends Node {
 
 // loaded on startup
 export default function (RED: NodeAPI) {
-    NamespaceNode.registerType(RED, "namespace");
+    NamespaceNode.registerType(RED, Controller.name);
 }
