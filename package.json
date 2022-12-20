@@ -27,7 +27,7 @@
     "@types/gulp-sourcemaps": "^0.0.35",
     "@types/gulp-uglify": "^3.0.7",
     "@types/merge-stream": "^1.1.2",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.17",
     "@types/node-red": "^1.2.1",
     "@types/node-red-node-test-helper": "^0.2.2",
     "@types/nodemon": "^1.19.2",
@@ -63,6 +63,7 @@
     }
   },
   "dependencies": {
-    "@kubernetes/client-node": "^0.17.1"
+    "@kubernetes/client-node": "^0.17.1",
+    "@types/ws": "^8.5.3"
   }
 }

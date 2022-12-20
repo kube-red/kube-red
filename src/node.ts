@@ -17,5 +17,4 @@ export class Node implements Node {
     }
 }
 
-export interface Node extends NRNode {
-}
+export interface Node extends NRNode {}

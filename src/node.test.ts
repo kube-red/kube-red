@@ -2,7 +2,8 @@ import { Node, RED } from "./node";
 import { NodeDef, NodeAPI } from "node-red";
 import nodeRedNodeTestHelper from "node-red-node-test-helper";
 import { afterEach, beforeEach, describe, it } from "node:test";
-import registerLowerCase from "./lower-case/node";
+import registerNamespace from "./namespace/node";
+import registerConfigMap from "./configmap/node";
 
 describe("Node", () => {
     class Foo extends Node {
@@ -18,7 +19,8 @@ describe("Node", () => {
         ];
         nodeRedNodeTestHelper.load((RED: NodeAPI) => {
             Foo.registerType(RED, "foo");
-            registerLowerCase(RED);
+            registerNamespace(RED);
+            registerConfigMap(RED);
         }, flow, () => {
             console.log(nodeRedNodeTestHelper.getNode("n1"));
             console.log(nodeRedNodeTestHelper.getNode("n2"));
