@@ -1,5 +1,5 @@
 import { NodeDef, NodeAPI } from "node-red";
-import { afterEach, beforeEach, describe, it } from "node:test";
+import { afterEach, beforeEach, describe, it, after } from "node:test";
 import registerNamespace from "./node";
 import registerClusterConfig from "../cluster-config/node";
 import * as k8s from '@kubernetes/client-node';
@@ -11,6 +11,10 @@ var helper = require("node-red-node-test-helper")
 helper.init(require.resolve('node-red'));
 
 describe('namespace Node', function () {
+  // Debugging using asyncDump
+  // after(function () {
+  //   global.asyncDump();
+  // });
 
   var name: string
   var k8sApi: k8s.CoreV1Api;
@@ -74,16 +78,16 @@ describe('namespace Node', function () {
 
   it('should create namespace', function (done) {
     var flow = [
-      { id: name+"1", type: "namespace", action:"create", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
-      { id: name+"2", type: "helper" },
+      { id: "n1", type: "namespace", action:"create", name: "namespace", cluster: "cfg", wires:[["n2"]] },
+      { id: "n2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode(name+"2");
-      var n1 = helper.getNode(name+"1");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
          let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
@@ -107,16 +111,16 @@ describe('namespace Node', function () {
     k8sApi.createNamespace(obj).then((res) => {}).catch((err) => {done(err)});
 
     var flow = [
-      { id: name+"1", type: "namespace", action:"get", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
-      { id: name+"2", type: "helper" },
+      { id: "n1", type: "namespace", action:"get", name: "namespace", cluster: "cfg", wires:[["n2"]] },
+      { id: "n2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode(name+"2");
-      var n1 = helper.getNode(name+"1");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
          let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
@@ -146,16 +150,16 @@ describe('namespace Node', function () {
     update.metadata.annotations = {"test": "test"};
 
     var flow = [
-      { id: name+"1", type: "namespace", action:"update", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
-      { id: name+"2", type: "helper" },
+      { id: "n1", type: "namespace", action:"update", name: "namespace", cluster: "cfg", wires:[["n2"]] },
+      { id: "n2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode(name+"2");
-      var n1 = helper.getNode(name+"1");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
@@ -179,16 +183,16 @@ describe('namespace Node', function () {
     k8sApi.createNamespace(obj).then((res) => {}).catch((err) => {done(err)});
 
     var flow = [
-      { id: name+"1", type: "namespace", action:"delete", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
-      { id: name+"2", type: "helper" },
+      { id: "n1", type: "namespace", action:"delete", name: "namespace", cluster: "cfg", wires:[["n2"]] },
+      { id: "n2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode(name+"2");
-      var n1 = helper.getNode(name+"1");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
@@ -217,16 +221,16 @@ describe('namespace Node', function () {
     patch.metadata.annotations = {"test": "test"};
 
     var flow = [
-      { id: name+"1", type: "namespace", action: "patch", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
-      { id: name+"2", type: "helper" },
+      { id: "n1", type: "namespace", action: "patch", name: "namespace", cluster: "cfg", wires:[["n2"]] },
+      { id: "n2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode(name+"2");
-      var n1 = helper.getNode(name+"1");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
