@@ -1,6 +1,6 @@
 import { NodeDef, NodeAPI,  NodeMessageInFlow } from "node-red";
 import { Node, RED } from "../node";
-import {Controller} from "./types";
+import { Controller } from "./types";
 
 import * as k8s from '@kubernetes/client-node';
 

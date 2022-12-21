@@ -54,5 +54,4 @@ function oneditprepare() {
     $("#node-input-server").prop("disabled", this.config.incluster);
     $("#node-input-user").prop("disabled", this.config.incluster);
     $("#node-input-password").prop("disabled", this.config.incluster);
-
 }
