@@ -4,8 +4,6 @@ import registerNamespace from "./node";
 import registerClusterConfig from "../cluster-config/node";
 import * as k8s from '@kubernetes/client-node';
 import fs from 'fs';
-import { V1Namespace } from "@kubernetes/client-node";
-
 
 var crypto = require("crypto");
 var helper = require("node-red-node-test-helper")
@@ -75,18 +73,17 @@ describe('namespace Node', function () {
   });
 
   it('should create namespace', function (done) {
-    // n1(cfg)-->n2
     var flow = [
-      { id: "n1", type: "namespace", action:"create", name: "namespace", cluster: "cfg", wires:[["n2"]] },
-      { id: "n2", type: "helper" },
+      { id: name+"1", type: "namespace", action:"create", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
+      { id: name+"2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode(name+"2");
+      var n1 = helper.getNode(name+"1");
       n2.on("input", function (msg) {
         try {
          let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
@@ -104,23 +101,22 @@ describe('namespace Node', function () {
   });
 
   it('should get namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
     k8sApi.createNamespace(obj).then((res) => {}).catch((err) => {done(err)});
 
     var flow = [
-      { id: "n1", type: "namespace", action:"get", name: "namespace", cluster: "cfg", wires:[["n2"]] },
-      { id: "n2", type: "helper" },
+      { id: name+"1", type: "namespace", action:"get", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
+      { id: name+"2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode(name+"2");
+      var n1 = helper.getNode(name+"1");
       n2.on("input", function (msg) {
         try {
          let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
@@ -137,8 +133,8 @@ describe('namespace Node', function () {
     });
   });
 
+
   it('should update namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
@@ -150,24 +146,24 @@ describe('namespace Node', function () {
     update.metadata.annotations = {"test": "test"};
 
     var flow = [
-      { id: "n1", type: "namespace", action:"update", name: "namespace", cluster: "cfg", wires:[["n2"]] },
-      { id: "n2", type: "helper" },
+      { id: name+"1", type: "namespace", action:"update", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
+      { id: name+"2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode(name+"2");
+      var n1 = helper.getNode(name+"1");
       n2.on("input", function (msg) {
         try {
-         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
-         if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
+        let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
+        if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
             done();
-         } else{
+        } else{
             done("namespace name not match")
-         }
+        }
         } catch(err) {
           done(err);
         }
@@ -177,41 +173,39 @@ describe('namespace Node', function () {
   });
 
   it('should delete namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
     k8sApi.createNamespace(obj).then((res) => {}).catch((err) => {done(err)});
 
     var flow = [
-      { id: "n1", type: "namespace", action:"delete", name: "namespace", cluster: "cfg", wires:[["n2"]] },
-      { id: "n2", type: "helper" },
+      { id: name+"1", type: "namespace", action:"delete", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
+      { id: name+"2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode(name+"2");
+      var n1 = helper.getNode(name+"1");
       n2.on("input", function (msg) {
         try {
-         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
-         if (data.status.phase == "Terminating") {
+        let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
+        if (data.status.phase == "Terminating") {
             done();
-         } else{
+        } else{
             done("namespace not deleting")
-         }
+        }
         } catch(err) {
           done(err);
         }
       });
-      n1.receive({payload: name}); // noop
+      n1.receive({payload: name});
     });
   });
 
   it('should patch namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
@@ -223,24 +217,24 @@ describe('namespace Node', function () {
     patch.metadata.annotations = {"test": "test"};
 
     var flow = [
-      { id: "n1", type: "namespace", action: "patch", name: "namespace", cluster: "cfg", wires:[["n2"]] },
-      { id: "n2", type: "helper" },
+      { id: name+"1", type: "namespace", action: "patch", name: "namespace", cluster: "cfg", wires:[[name+"2"]] },
+      { id: name+"2", type: "helper" },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
       registerNamespace(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode(name+"2");
+      var n1 = helper.getNode(name+"1");
       n2.on("input", function (msg) {
         try {
-         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
-         if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
+        let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
+        if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
             done();
-         } else{
+        } else{
             done("namespace name not match")
-         }
+        }
         } catch(err) {
           done(err);
         }

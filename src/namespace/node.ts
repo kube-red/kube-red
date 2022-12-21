@@ -77,7 +77,7 @@ class NamespaceNode extends Node {
         fn.then((res) => {
             this.send({payload: res.body});
         }).catch((err) => {
-            this.error(JSON.stringify(err))
+            this.error(err);
         });
     }
 }
