@@ -64,10 +64,12 @@ class NamespaceNode extends Node {
                 fn = k8sApi.listNamespace()
                 break;
             case "patch":
-                fn = k8sApi.patchNamespace(obj.metadata.name, obj)
+                fn = k8sApi.patchNamespace(obj.metadata.name, obj, undefined, undefined, undefined, undefined, undefined,
+                    { headers: { "Content-Type": "application/merge-patch+json" } })
                 break;
             case "update":
                 fn = k8sApi.replaceNamespace(obj.metadata.name, obj)
+                break;
             default:
                 this.error("Invalid action");
         }
