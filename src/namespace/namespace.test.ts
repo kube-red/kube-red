@@ -56,6 +56,7 @@ describe('namespace Node', function () {
       }
     });
   })
+
   it('should be loaded in exported flow', function (done) {
     var flow = [
       {"id":"3912a37a.c3818c","type":"namespace", "cluster":"e20cf249a8b5dc64","z":"e316ac4b.c85a2","name":"namespace","x":240,"y":320,"wires":[[]]},
