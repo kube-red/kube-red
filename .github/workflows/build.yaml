@@ -1,6 +1,6 @@
 # test locally:
 # act pull_request
-name: unit-tests
+name: build
 
 on:
   push:
@@ -15,15 +15,11 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: setup kind
-        uses: helm/kind-action@v1.4.0
       - name: setup node
         uses: actions/setup-node@v3
         with:
           node-version: 19
       - name: install dependencies
         run: npm install
-      - name: run tests
-        run: |
-          echo ${KUBECONFIG} > kubeconfig
-          npm test
+      - name: build
+        run: npm run build
