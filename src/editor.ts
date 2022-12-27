@@ -2,6 +2,7 @@ import { EditorRED } from "node-red";
 import ClusterConfigEditor from "./cluster-config/editor";
 import NamespaceEditor from "./namespace/editor";
 import ConfigMapEditor from "./configmap/editor";
+import UpsertEditor from "./upsert/editor";
 
 declare const RED: EditorRED;
 
@@ -13,6 +14,7 @@ declare const RED: EditorRED;
 //     RED.nodes.registerType("pods", PodsEditor);
 // }
 
+RED.nodes.registerType("upsert", UpsertEditor)
 RED.nodes.registerType("cluster-config", ClusterConfigEditor)
 RED.nodes.registerType("namespace", NamespaceEditor)
 RED.nodes.registerType("configmap", ConfigMapEditor)
