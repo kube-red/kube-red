@@ -1,6 +1,6 @@
 import { NodeDef, NodeAPI } from "node-red";
 import { afterEach, beforeEach, describe, it, after } from "node:test";
-import registerNamespace from "./node";
+import register from "./node";
 import registerClusterConfig from "../cluster-config/node";
 import * as k8s from '@kubernetes/client-node';
 import fs from 'fs';
@@ -47,7 +47,7 @@ describe('namespace Node', function () {
         { id: "n1", type: "namespace", name: "nc" },
     ];
     helper.load((RED: NodeAPI) => {
-        registerNamespace(RED);
+      register(RED);
     }, flow, function () {
       var n1 = helper.getNode("n1");
       try {
@@ -64,7 +64,7 @@ describe('namespace Node', function () {
       {"id":"3912a37a.c3818c","type":"namespace", "cluster":"e20cf249a8b5dc64","z":"e316ac4b.c85a2","name":"namespace","x":240,"y":320,"wires":[[]]},
   ];
     helper.load((RED: NodeAPI) => {
-      registerNamespace(RED);
+      register(RED);
   }, flow, function () {
       var n1 = helper.getNode("3912a37a.c3818c");
       try {
@@ -83,7 +83,7 @@ describe('namespace Node', function () {
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
-      registerNamespace(RED);
+      register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
       var n2 = helper.getNode("n2");
@@ -116,7 +116,7 @@ describe('namespace Node', function () {
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
-      registerNamespace(RED);
+      register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
       var n2 = helper.getNode("n2");
@@ -155,7 +155,7 @@ describe('namespace Node', function () {
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
-      registerNamespace(RED);
+      register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
       var n2 = helper.getNode("n2");
@@ -188,7 +188,7 @@ describe('namespace Node', function () {
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
-      registerNamespace(RED);
+      register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
       var n2 = helper.getNode("n2");
@@ -226,7 +226,7 @@ describe('namespace Node', function () {
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
-      registerNamespace(RED);
+      register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
       var n2 = helper.getNode("n2");

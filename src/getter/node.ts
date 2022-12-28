@@ -40,7 +40,6 @@ class GetterNode extends Node {
         this.kc = kc;
 
         this.on("input", async function(msg,send,done) {
-            console.log(this.kc)
             let client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
 
             // generic object for actions

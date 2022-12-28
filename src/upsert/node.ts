@@ -6,7 +6,6 @@ import * as k8s from '@kubernetes/client-node';
 
 export interface UpsertProperties extends NodeDef {
     cluster: string;
-    action: string;
 }
 
 class UpsertNode extends Node {
@@ -17,7 +16,6 @@ class UpsertNode extends Node {
     constructor(config: UpsertProperties) {
         super(config);
         this.cluster = config.cluster;
-        this.action = config.action;
 
         let configNode: any
         configNode = RED.nodes.getNode(config.cluster);
