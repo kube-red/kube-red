@@ -36,13 +36,7 @@ describe('list Node', function () {
     object = {
       apiVersion: "v1",
       kind: "Namespace",
-      metadata: {
-        name: name,
-      },
     }
-
-    client.create(object).then((res) => {}).catch((err) => {});
-
   });
 
   afterEach(function (done) {
@@ -54,7 +48,7 @@ describe('list Node', function () {
 
   it("should be loaded", (done) => {
     var flow = [
-        { id: "n1", type: "get", name: "test", cluster: "cfg" },
+        { id: "n1", type: "list", name: "test", cluster: "cfg" },
         { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
     helper.load((RED: NodeAPI) => {
@@ -73,7 +67,7 @@ describe('list Node', function () {
 
   it('should be loaded in exported flow', function (done) {
     var flow = [
-      { id:"3912a37a.c3818c", type:"get", cluster:"e20cf249a8b5dc64",z:"e316ac4b.c85a2", name:"test",x:240,y:320,wires: [[]]},
+      { id:"3912a37a.c3818c", type:"list", cluster:"e20cf249a8b5dc64",z:"e316ac4b.c85a2", name:"test",x:240,y:320,wires: [[]]},
       { id: "e20cf249a8b5dc64", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
   ];
     helper.load((RED: NodeAPI) => {
@@ -91,9 +85,9 @@ describe('list Node', function () {
   });
 
   // There is some sync issues with k8s api to create namespace in async
-  it('should get object', function (done) {
+  it('should list object', function (done) {
     var flow = [
-      { id: "n1", type: "get", name: "test", cluster: "cfg", wires:[["n2"]] },
+      { id: "n1", type: "list", name: "test", cluster: "cfg", wires:[["n2"]] },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
       { id: "n2", type: "helper" },
     ];
@@ -106,8 +100,8 @@ describe('list Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data =  msg.object;
-         if (data.metadata.name == object.metadata.name) {
+         let data = msg.object as k8s.KubernetesObject;
+         if (data.items > 0) {
             done();
          } else{
             done("object name not match")
