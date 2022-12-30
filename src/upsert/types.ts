@@ -1,4 +1,3 @@
 export const Controller = {
-    name: "namespace",
+    name: "upsert",
 };
-

@@ -2,16 +2,13 @@ import { EditorNodeDef, EditorNodeProperties } from 'node-red';
 import { Controller } from './types';
 import { Controller as ClusterConfigController} from '../cluster-config/types';
 
-export interface NamespaceEditorProperties extends EditorNodeProperties {
+export interface UpsertEditorProperties extends EditorNodeProperties {
     nodename: string;
     cluster: string;
-
-    namespace: string;
-    name: string;
 }
 
 
-const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
+const UpsertEditor: EditorNodeDef<UpsertEditorProperties> = {
     category: 'kubernetes',
     color: "#326DE6",
     icon: "kubernetes_logo_40x60_white.png",
@@ -19,8 +16,6 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
     defaults: {
         nodename: {value:""},
         cluster: {value: "", type: ClusterConfigController.name, required: true},
-        namespace: {value: ""},
-        name: {value: ""},
     },
     inputs:1,
     outputs:1,
@@ -29,4 +24,4 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
     },
 }
 
-export default NamespaceEditor;
+export default UpsertEditor;

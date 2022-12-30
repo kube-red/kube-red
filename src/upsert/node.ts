@@ -1,27 +1,21 @@
 import { NodeDef, NodeAPI,  NodeMessageInFlow } from "node-red";
 import { Node, RED } from "../node";
 import { Controller } from "./types";
-import PayloadType from "../shared/types";
 
 import * as k8s from '@kubernetes/client-node';
 
-export interface NamespaceProperties extends NodeDef {
+export interface UpsertProperties extends NodeDef {
     cluster: string;
-    namespace: string;
-    name: string;
 }
 
-class NamespaceNode extends Node {
+class UpsertNode extends Node {
     cluster: string;
+    action: string;
     kc: k8s.KubeConfig;
-    name: string;
-    namespace: string;
 
-    constructor(config: NamespaceProperties) {
+    constructor(config: UpsertProperties) {
         super(config);
         this.cluster = config.cluster;
-        this.name = config.name;
-        this.namespace = config.namespace;
 
         let configNode: any
         configNode = RED.nodes.getNode(config.cluster);
@@ -34,30 +28,22 @@ class NamespaceNode extends Node {
         kc.loadFromOptions(configNode.k8s);
         this.kc = kc;
 
-        this.on("input", async function(msg: PayloadType ,send,done) {
+        this.on("input", async function(msg,send,done) {
+            console.log(this.kc)
             let client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
-            let spec: k8s.KubernetesObject = {};
 
-            // TODO: payload of config map?
+            // generic object for actions
+            switch (typeof msg.payload) {
+                case 'object':
+                    break;
+                default:
+                    this.error("Invalid payload type");
+            }
+
+
+            var spec: k8s.KubernetesObject = msg.payload;
 
             spec.metadata = spec.metadata || {};
-            spec.kind = "ConfigMap";
-            spec.apiVersion = "v1";
-
-            if (this.name){
-                spec.metadata.name = this.name
-            }
-            if (msg.namespace){
-                spec.metadata.namespace = msg.namespace
-            } else if(this.namespace){
-                spec.metadata.namespace = this.namespace
-            }
-
-            if (!spec.metadata.name || !spec.metadata.namespace) {
-                this.error("No required inputs specified. See node documentation for details.");
-                return;
-            }
-
             spec.metadata.annotations = spec.metadata.annotations || {};
             delete spec.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'];
             spec.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'] = JSON.stringify(spec);
@@ -73,16 +59,12 @@ class NamespaceNode extends Node {
                 //
                 // See: https://github.com/kubernetes/kubernetes/issues/97423
                 const response = await client.patch(spec);
-                msg.namespace = msg.namespace || this.namespace;
-                msg.object = response.body
-                this.send(msg)
+                this.send({payload: response.body});
             } catch (e) {
                 // we did not get the resource, so it does not exist, so create it
                 try {
                     const response = await client.create(spec);
-                    msg.namespace = msg.namespace || this.namespace;
-                    msg.object = response.body
-                    this.send(msg)
+                    this.send({payload: response.body});
                 } catch (e) {
                     this.error("Failed to upsert resource: " + e);
                 }
@@ -93,5 +75,5 @@ class NamespaceNode extends Node {
 
 // loaded on startup
 export default function (RED: NodeAPI) {
-    NamespaceNode.registerType(RED, Controller.name);
+    UpsertNode.registerType(RED, Controller.name);
 }

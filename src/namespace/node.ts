@@ -1,83 +1,76 @@
 import { NodeDef, NodeAPI,  NodeMessageInFlow } from "node-red";
 import { Node, RED } from "../node";
 import { Controller } from "./types";
+import PayloadType from "../shared/types";
 
 import * as k8s from '@kubernetes/client-node';
 
+
 export interface NamespaceProperties extends NodeDef {
     cluster: string;
-    action: string;
+    name: string;
 }
 
 class NamespaceNode extends Node {
     cluster: string;
-    action: string;
-    configNode: any;
+    kc: k8s.KubeConfig;
+    name: string;
 
     constructor(config: NamespaceProperties) {
         super(config);
         this.cluster = config.cluster;
-        this.action = config.action;
-        this.configNode = RED.nodes.getNode(config.cluster);
+        this.name = config.name;
 
-        if (this.configNode === undefined) {
+        let configNode: any
+        configNode = RED.nodes.getNode(config.cluster);
+        if (configNode === undefined) {
             this.error("Cluster config not found");
             return;
         }
 
-        this.on('input', this.onInput);
-    }
-
-    onInput(msg: NodeMessageInFlow) {
         var kc = new k8s.KubeConfig();
-        kc.loadFromOptions(this.configNode.k8s);
+        kc.loadFromOptions(configNode.k8s);
+        this.kc = kc;
 
-        const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+        this.on("input", async function(msg: PayloadType,send,done) {
+            let client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
+            let spec: k8s.KubernetesObject = {};
 
-        // generic object for actions
-        var obj = new k8s.V1Namespace();
-        switch (typeof msg.payload) {
-            case 'string':
-                obj.metadata = new k8s.V1ObjectMeta();
-                obj.metadata.name = msg.payload;
-                break;
-            case 'object':
-                obj = msg.payload;
-                break;
-            default:
-                this.error("Invalid payload type");
-        }
+            spec = msg.object || {};
+            spec.metadata = spec.metadata || {};
+            spec.kind = "Namespace";
+            spec.apiVersion = "v1";
 
-        // switch based on action
-        let fn = null;
-        switch (this.action) {
-            case "create":
-                fn = k8sApi.createNamespace(obj)
-                break;
-            case "delete":
-                fn =  k8sApi.deleteNamespace(obj.metadata.name)
-                break;
-            case "get":
-                fn = k8sApi.readNamespace(obj.metadata.name)
-                break;
-            case "list":
-                fn = k8sApi.listNamespace()
-                break;
-            case "patch":
-                fn = k8sApi.patchNamespace(obj.metadata.name, obj, undefined, undefined, undefined, undefined, undefined,
-                    { headers: { "Content-Type": "application/merge-patch+json" } })
-                break;
-            case "update":
-                fn = k8sApi.replaceNamespace(obj.metadata.name, obj)
-                break;
-            default:
-                this.error("Invalid action");
-        }
+            if (!spec.metadata.name) {
+                spec.metadata.name = this.name
+            }
 
-        fn.then((res) => {
-            this.send({payload: res.body});
-        }).catch((err) => {
-            this.error(err);
+            spec.metadata.annotations = spec.metadata.annotations || {};
+            delete spec.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'];
+            spec.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'] = JSON.stringify(spec);
+            try {
+                await client.read({ kind: spec.kind, apiVersion: spec.apiVersion, metadata: {name:spec.metadata.name, namespace: spec.metadata.namespace}});
+                // we got the resource, so it exists, so patch it
+                //
+                // Note that this could fail if the spec refers to a custom resource. For custom resources you may need
+                // to specify a different patch merge strategy in the content-type header.
+                //
+                // See: https://github.com/kubernetes/kubernetes/issues/97423
+                const response = await client.patch(spec);
+                msg.namespace = spec.metadata.name;
+                msg.object = response.body
+                this.send(msg)
+            } catch (e) {
+                // we did not get the resource, so it does not exist, so create it
+                try {
+                    const response = await client.create(spec);
+                    msg.namespace = spec.metadata.name;
+                    msg.object = response.body
+                    this.send(msg)
+                } catch (e) {
+                    this.error("Failed to upsert resource: " + e);
+                }
+            }
         });
     }
 }
