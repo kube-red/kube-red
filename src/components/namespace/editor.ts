@@ -1,9 +1,10 @@
 import { EditorNodeDef, EditorNodeProperties } from 'node-red';
 import { Controller } from './types';
-import { Controller as ClusterConfigController} from '../cluster-config/types';
+import { Controller as ClusterConfigController} from '../../cluster-config/types';
 
 export interface NamespaceEditorProperties extends EditorNodeProperties {
     cluster: string;
+    nodename: string;
 
     action: string;
 }
@@ -15,14 +16,14 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
     icon: "kubernetes_logo_40x60_white.png",
     align: "left",
     defaults: {
-        name: {value:""},
+        nodename: {value:""},
         cluster: {value: "", type: ClusterConfigController.name, required: true},
         action: {value: "-"},
     },
     inputs:1,
     outputs:1,
     label: function() {
-        return this.name||Controller.name;
+        return this.nodename||Controller.name;
     },
     oneditprepare: function() {
         // Example how to add a new row on action selection using switch

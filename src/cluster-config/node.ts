@@ -1,7 +1,7 @@
 import { NodeDef, NodeAPI, NodeMessageInFlow } from "node-red";
 import { Node } from "../node";
 import * as k8s from '@kubernetes/client-node';
-import { ClusterConfig } from "./types";
+import { ClusterConfig, Controller } from "./types";
 
 export interface ClusterConfigProperties extends NodeDef {
     k8s: k8s.KubeConfig;
@@ -49,5 +49,5 @@ class ClusterConfigNode extends Node {
 
 // loaded on startup
 export default function (RED: NodeAPI) {
-    ClusterConfigNode.registerType(RED, "cluster-config");
+    ClusterConfigNode.registerType(RED, Controller.name);
 }

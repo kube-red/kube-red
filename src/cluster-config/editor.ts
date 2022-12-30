@@ -2,6 +2,7 @@ import { EditorNodeDef, EditorNodeProperties } from 'node-red';
 import { Controller, ClusterConfig } from "./types";
 
 export interface ClusterConfigEditorProperties extends EditorNodeProperties {
+    nodename: string;
     config: ClusterConfig;
 }
 
@@ -9,7 +10,7 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
     category: 'config',
     color: '#a6bbcf',
     defaults: {
-        name: {value:""},
+        nodename: {value:""},
         config: {value: Controller.defaults},
     },
     inputs:0,
@@ -18,7 +19,7 @@ const ClusterConfigEditor: EditorNodeDef<ClusterConfigEditorProperties> = {
     oneditsave: oneditsave,
     oneditprepare: oneditprepare,
     label: function() {
-        return this.name||Controller.name;
+        return this.nodename||Controller.name;
     }
 }
 
@@ -27,7 +28,7 @@ export default ClusterConfigEditor;
 function oneditsave() {
     this.config = Controller.defaults;
 
-    this.name = $("#node-input-name").val()
+    this.nodename = $("#node-input-nodename").val()
     this.config.server = $("#node-input-server").val();
     this.config.incluster = $("#node-input-incluster").is(":checked");
     this.config.user = $("#node-input-user").val();
@@ -44,7 +45,7 @@ function oneditprepare() {
     });
 
     // restore form values
-    $("#node-input-name").val(this.name)
+    $("#node-input-nodename").val(this.nodename)
     $("#node-input-incluster").prop("checked", this.config.incluster);
     $("#node-input-server").val(this.config.server);
     $("#node-input-user").val(this.config.user);
