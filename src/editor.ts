@@ -10,6 +10,8 @@ import DeleteEditor from "./generic/delete/editor";
 import {Controller as DeleteController} from "./generic/delete/types";
 import ListEditor from "./generic/list/editor";
 import {Controller as ListController} from "./generic/list/types";
+import CreateEditor from "./generic/create/editor";
+import {Controller as CreateController} from "./generic/create/types";
 
 declare const RED: EditorRED;
 
@@ -26,3 +28,4 @@ RED.nodes.registerType(UpsertController.name, UpsertEditor)
 RED.nodes.registerType(GetController.name, GetEditor)
 RED.nodes.registerType(DeleteController.name, DeleteEditor)
 RED.nodes.registerType(ListController.name, ListEditor)
+RED.nodes.registerType(CreateController.name, CreateEditor)

@@ -4,6 +4,7 @@ import registerUpsert from "./generic/upsert/node";
 import registerGet from "./generic/get/node";
 import registerDelete from "./generic/delete/node";
 import registerList from "./generic/list/node";
+import registerCreate from "./generic/create/node";
 
 export default function (RED: NodeAPI) {
     registerClusterConfig(RED);
@@ -11,4 +12,5 @@ export default function (RED: NodeAPI) {
     registerGet(RED);
     registerDelete(RED);
     registerList(RED);
+    registerCreate(RED);
 }

@@ -5,16 +5,16 @@ import PayloadType from "../../shared/types";
 
 import * as k8s from '@kubernetes/client-node';
 
-export interface UpsertProperties extends NodeDef {
+export interface CreateProperties extends NodeDef {
     cluster: string;
 }
 
-class UpsertNode extends Node {
+class CreateNode extends Node {
     cluster: string;
     action: string;
     kc: k8s.KubeConfig;
 
-    constructor(config: UpsertProperties) {
+    constructor(config: CreateProperties) {
         super(config);
         this.cluster = config.cluster;
 
@@ -49,22 +49,13 @@ class UpsertNode extends Node {
                 return;
             }
 
-            spec.metadata.annotations = spec.metadata.annotations || {};
-            delete spec.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'];
-            spec.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'] = JSON.stringify(spec);
             try {
                 // try to get the resource, if it does not exist an error will be thrown and we will end up in the catch
                 // block.
 
-                await client.read({ kind: spec.kind, apiVersion: spec.apiVersion, metadata: {name:spec.metadata.name, namespace: spec.metadata.namespace}});
-                // we got the resource, so it exists, so patch it
-                //
-                // Note that this could fail if the spec refers to a custom resource. For custom resources you may need
-                // to specify a different patch merge strategy in the content-type header.
-                //
-                // See: https://github.com/kubernetes/kubernetes/issues/97423
-                const response = await client.patch(spec);
-                msg.object = response.body;
+                const response = await client.read({ kind: spec.kind, apiVersion: spec.apiVersion, metadata: {name:spec.metadata.name, namespace: spec.metadata.namespace}});
+                // we got the resource, so it exists, so just send it back
+                msg.object = response.body
                 this.send(msg);
             } catch (e) {
                 // we did not get the resource, so it does not exist, so create it
@@ -82,5 +73,5 @@ class UpsertNode extends Node {
 
 // loaded on startup
 export default function (RED: NodeAPI) {
-    UpsertNode.registerType(RED, Controller.name);
+    CreateNode.registerType(RED, Controller.name);
 }
