@@ -1,6 +1,6 @@
 import { NodeDef, NodeAPI,  NodeMessageInFlow } from "node-red";
 import { Node, RED } from "../node";
-import {Controller} from "./types";
+import { Controller } from "./types";
 
 import * as k8s from '@kubernetes/client-node';
 
@@ -77,7 +77,7 @@ class NamespaceNode extends Node {
         fn.then((res) => {
             this.send({payload: res.body});
         }).catch((err) => {
-            this.error(JSON.stringify(err))
+            this.error(err);
         });
     }
 }

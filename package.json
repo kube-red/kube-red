@@ -6,7 +6,7 @@
     "build": "npx gulp build",
     "clean": "npx gulp clean",
     "nodered": "npx gulp nodered",
-    "test": "ts-mocha \"src/**/*.test.ts\""
+    "test": "ts-mocha --require hack/async-dump \"src/**/*.test.ts\""
   },
   "author": "",
   "license": "ISC",

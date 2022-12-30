@@ -1,11 +1,9 @@
 import { NodeDef, NodeAPI } from "node-red";
-import { afterEach, beforeEach, describe, it } from "node:test";
+import { afterEach, beforeEach, describe, it, after } from "node:test";
 import registerNamespace from "./node";
 import registerClusterConfig from "../cluster-config/node";
 import * as k8s from '@kubernetes/client-node';
 import fs from 'fs';
-import { V1Namespace } from "@kubernetes/client-node";
-
 
 var crypto = require("crypto");
 var helper = require("node-red-node-test-helper")
@@ -13,6 +11,10 @@ var helper = require("node-red-node-test-helper")
 helper.init(require.resolve('node-red'));
 
 describe('namespace Node', function () {
+  // Debugging using asyncDump
+  // after(function () {
+  //   global.asyncDump();
+  // });
 
   var name: string
   var k8sApi: k8s.CoreV1Api;
@@ -56,6 +58,7 @@ describe('namespace Node', function () {
       }
     });
   })
+
   it('should be loaded in exported flow', function (done) {
     var flow = [
       {"id":"3912a37a.c3818c","type":"namespace", "cluster":"e20cf249a8b5dc64","z":"e316ac4b.c85a2","name":"namespace","x":240,"y":320,"wires":[[]]},
@@ -74,7 +77,6 @@ describe('namespace Node', function () {
   });
 
   it('should create namespace', function (done) {
-    // n1(cfg)-->n2
     var flow = [
       { id: "n1", type: "namespace", action:"create", name: "namespace", cluster: "cfg", wires:[["n2"]] },
       { id: "n2", type: "helper" },
@@ -103,7 +105,6 @@ describe('namespace Node', function () {
   });
 
   it('should get namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
@@ -136,8 +137,8 @@ describe('namespace Node', function () {
     });
   });
 
+
   it('should update namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
@@ -161,12 +162,12 @@ describe('namespace Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
-         if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
+        let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
+        if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
             done();
-         } else{
+        } else{
             done("namespace name not match")
-         }
+        }
         } catch(err) {
           done(err);
         }
@@ -176,7 +177,6 @@ describe('namespace Node', function () {
   });
 
   it('should delete namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
@@ -195,22 +195,21 @@ describe('namespace Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
-         if (data.status.phase == "Terminating") {
+        let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
+        if (data.status.phase == "Terminating") {
             done();
-         } else{
+        } else{
             done("namespace not deleting")
-         }
+        }
         } catch(err) {
           done(err);
         }
       });
-      n1.receive({payload: name}); // noop
+      n1.receive({payload: name});
     });
   });
 
   it('should patch namespace', function (done) {
-    // create an object
     var obj = new k8s.V1Namespace();
     obj.metadata = new k8s.V1ObjectMeta();
     obj.metadata.name = name;
@@ -234,12 +233,12 @@ describe('namespace Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-         let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
-         if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
+        let data = Object.assign(new k8s.V1Namespace(), msg.payload) as k8s.V1Namespace;
+        if (data.metadata.name == name && data.metadata.annotations["test"] == "test") {
             done();
-         } else{
+        } else{
             done("namespace name not match")
-         }
+        }
         } catch(err) {
           done(err);
         }
