@@ -50,22 +50,21 @@ class CreateNode extends Node {
             }
 
             try {
-                // try to get the resource, if it does not exist an error will be thrown and we will end up in the catch
-                // block.
-
-                const response = await client.read({ kind: spec.kind, apiVersion: spec.apiVersion, metadata: {name:spec.metadata.name, namespace: spec.metadata.namespace}});
-                // we got the resource, so it exists, so just send it back
-                msg.object = response.body
-                this.send(msg);
-            } catch (e) {
-                // we did not get the resource, so it does not exist, so create it
-                try {
-                    const response = await client.create(spec);
-                    msg.object = response.body
-                    this.send(msg);
-                } catch (e) {
-                    this.error(e);
+                const responseList = await client.list(spec.apiVersion,spec.kind, spec.metadata.namespace);
+                for (const item of responseList.body.items) {
+                    if (item.metadata.name === spec.metadata.name) {
+                        msg.object = item;
+                        this.send(msg);
+                        return;
+                    }
                 }
+                // if not found - create
+                const responseCreate = await client.create(spec);
+                msg.object = responseCreate.body
+                this.send(msg);
+                return;
+            } catch (e) {
+                this.error(e);
             }
         });
     }
