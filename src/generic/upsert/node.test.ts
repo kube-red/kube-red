@@ -15,7 +15,7 @@ describe('upsert Node', function () {
   var name: string
   var client: k8s.KubernetesObjectApi;
 
-  var object: k8s.KubernetesObject;
+  var object, existingObject: k8s.KubernetesObject;
 
   beforeEach(function (done) {
     if (!fs.existsSync("./kubeconfig")) {
@@ -41,8 +41,13 @@ describe('upsert Node', function () {
       },
     }
 
-  });
+    existingObject = JSON.parse(JSON.stringify(object)); // deep copy
+    existingObject.metadata.name = name + "-existing";
 
+    // create object
+    client.create(existingObject).then((res) => {}).catch((err) => {});
+
+  });
 
   afterEach(function (done) {
     helper.unload();
@@ -103,7 +108,7 @@ describe('upsert Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data =  msg.object;
+         let data = msg.object;
          if (data.metadata.name == name) {
             done();
          } else{
@@ -128,17 +133,13 @@ describe('upsert Node', function () {
       registerClusterConfig(RED);
   }, flow, function () {
 
-      // create object
-      client.create(object).then((res) => {}).catch((err) => {done(err)});
-
-      let newObject = object;
-      newObject.metadata.labels = {"test": "test"};
+      existingObject.metadata.labels = {"test": "test"};
 
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data =  msg.object;
+         let data = msg.object;
          if (data.metadata.labels["test"] == "test") {
             done();
          } else{
@@ -148,7 +149,7 @@ describe('upsert Node', function () {
           done(err);
         }
       });
-      n1.receive({object: newObject});
+      n1.receive({object: existingObject});
     });
   });
 

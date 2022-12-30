@@ -100,8 +100,8 @@ describe('list Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data = msg.object as k8s.KubernetesObject;
-         if (data.items > 0) {
+         let data = msg.object as k8s.V1NamespaceList;
+         if (data.items.length > 0) {
             done();
          } else{
             done("object name not match")

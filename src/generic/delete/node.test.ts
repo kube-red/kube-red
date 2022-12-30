@@ -106,11 +106,11 @@ describe('delete Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data =  msg.object;
-         if (data.metadata.name == object.metadata.name) {
+         let data =  msg.object as k8s.V1Status;
+         if (data.status["phase"] == 'Terminating') {
             done();
          } else{
-            done("object name not match")
+            done("object status not match")
          }
         } catch(err) {
           done(err);
