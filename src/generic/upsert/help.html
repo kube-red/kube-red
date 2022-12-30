@@ -1,0 +1,8 @@
+<p>Upsert k8s objects</p>
+
+Allows to create or update k8s objects.
+If the object already exists, it will be updated using patch.
+
+object must be a valid k8s object, provided in json or yaml format
+in msg.payload. It must contain the apiVersion, kind and metadata with
+at least the name and namespace fields.

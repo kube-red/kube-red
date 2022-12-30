@@ -1,6 +1,6 @@
 import { EditorNodeDef, EditorNodeProperties } from 'node-red';
 import { Controller } from './types';
-import { Controller as ClusterConfigController} from '../cluster-config/types';
+import { Controller as ClusterConfigController} from '../../cluster-config/types';
 
 export interface ConfigMapEditorProperties extends EditorNodeProperties {
     cluster: string;
