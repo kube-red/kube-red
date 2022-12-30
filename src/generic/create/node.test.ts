@@ -53,6 +53,7 @@ describe('create Node', function () {
     helper.unload();
     helper.stopServer(done);
 
+    client.delete(existingObject).then((res) => {}).catch((err) => {});
     client.delete(object).then((res) => {}).catch((err) => {});
   });
 
