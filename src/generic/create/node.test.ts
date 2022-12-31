@@ -141,6 +141,7 @@ describe('create Node', function () {
       n2.on("input", function (msg: PayloadType) {
         try {
          let data = msg.object;
+
          if (data.metadata.labels["test"] != "test") {
             done();
          } else{

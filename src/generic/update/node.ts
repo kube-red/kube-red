@@ -50,20 +50,21 @@ class UpdateNode extends Node {
             }
 
             try {
-                // try to get the resource, if it does not exist an error will be thrown and we will end up in the catch
-                // block.
+                const responseList = await client.list(spec.apiVersion,spec.kind, spec.metadata.namespace);
+                for (const item of responseList.body.items) {
+                    if (item.metadata.name === spec.metadata.name) {
 
-                const response = await client.read({ kind: spec.kind, apiVersion: spec.apiVersion, metadata: {name:spec.metadata.name, namespace: spec.metadata.namespace}});
+                        const response = await client.patch(spec);
+                        msg.object = response.body
+                        this.send(msg);
 
-            } catch (e) {
-                // we did not get the resource, so it does not exist, so create it
-                try {
-                    const response = await client.patch(spec);
-                    msg.object = response.body
-                    this.send(msg);
-                } catch (e) {
-                    this.error(e);
+                        return;
+                    }
                 }
+                // else if not patched, just send original message
+                this.send(msg);
+            } catch (e) {
+                this.send(e);
             }
         });
     }
