@@ -40,8 +40,10 @@ class ListNode extends Node {
         kc.loadFromOptions(configNode.k8s);
         this.kc = kc;
 
+        let client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
+
         this.on("input", async function(msg: PayloadType,send,done) {
-            let client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
+
             let spec: k8s.KubernetesObject = {};
 
             spec = msg.object || {};

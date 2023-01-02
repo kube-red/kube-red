@@ -60,7 +60,7 @@ class WatcherNode extends Node {
 
         WatcherNode.prototype.start = function() {
             watch.watch(watchEndpoint, {allowWatchBookmarks: true,}, (type: string, apiObj: k8s.KubernetesObject, watchObj: k8s.KubernetesObject) => {
-                let msg: PayloadType = {_msgid: ""};
+                let msg: PayloadType = {_msgid: ""}; // Node will generate new ID and we need value for typescript.
 
                 if (type === 'ADDED') {
                     msg.watchEventType = 'ADDED';
