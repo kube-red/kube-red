@@ -3,7 +3,7 @@ on:
   release:
     types: [created]
 jobs:
-  build:
+  npmjs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,13 +16,7 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-name: Publish package to GitHub Packages
-on:
-  release:
-    types: [created]
-jobs:
-  build:
+  github:
     runs-on: ubuntu-latest
     permissions:
       contents: read
