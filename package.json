@@ -5,13 +5,20 @@
     "url": "https://github.com/kube-red/kube-red.git"
   },
   "version": "0.0.1-dev",
-  "description": "",
+  "description": "A node-red node that supports interacting with kubernetes clusters (get, delete, create, list, watch, upsert)",
   "scripts": {
     "build": "npx gulp build",
     "clean": "npx gulp clean",
     "nodered": "npx gulp nodered",
     "test": "ts-mocha --require hack/async-dump \"src/**/*.test.ts\""
   },
+  "keywords": [
+    "node-red",
+    "node",
+    "nodered",
+    "k8s",
+    "kubernetes"
+  ],
   "author": "",
   "license": "ISC",
   "files": [
