@@ -1,5 +1,9 @@
 {
-  "name": "node-red-kube-red",
+  "name": "@kube-red/node-red-kube-red",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kube-red/kube-red.git"
+  },
   "version": "0.0.1-dev",
   "description": "",
   "scripts": {
