@@ -6,6 +6,7 @@ import registerDelete from "./generic/delete/node";
 import registerList from "./generic/list/node";
 import registerCreate from "./generic/create/node";
 import registerUpdate from "./generic/update/node";
+import registerWatcher from "./generic/watcher/node";
 
 export default function (RED: NodeAPI) {
     registerClusterConfig(RED);
@@ -15,4 +16,5 @@ export default function (RED: NodeAPI) {
     registerList(RED);
     registerCreate(RED);
     registerUpdate(RED);
+    registerWatcher(RED);
 }

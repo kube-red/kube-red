@@ -59,7 +59,7 @@ gulp.task("editor-html", () => {
 
     return merge([editor, help])
         .pipe(concat('kube-red.html'))
-        .pipe(header('<script type="text/javascript" src="resources/node-red-kube-red/editor.js"></script>'))
+        .pipe(header('<script type="text/javascript" src="resources/@kube-red/node-red-kube-red/editor.js"></script>')) // must match package name
         .pipe(gulp.dest('dist'));
 });
 
