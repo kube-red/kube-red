@@ -1,21 +1,21 @@
-import { NodeDef, NodeAPI } from "node-red";
-import { afterEach, beforeEach, describe, it, after } from "node:test";
+import { NodeAPI } from "node-red";
+import { afterEach, beforeEach, describe, it } from "node:test";
 import register from "./node";
 import registerClusterConfig from "../../cluster-config/node";
 import * as k8s from '@kubernetes/client-node';
 import fs from 'fs';
 import PayloadType from "../../shared/types";
 
-var crypto = require("crypto");
-var helper = require("node-red-node-test-helper")
+import crypto = require("crypto");
+import helper = require("node-red-node-test-helper")
 
 helper.init(require.resolve('node-red'));
 
 describe('update Node', function () {
-  var name: string
-  var client: k8s.KubernetesObjectApi;
+  let name: string
+  let client: k8s.KubernetesObjectApi;
 
-  var object, existingObject: k8s.KubernetesObject;
+  let object, existingObject: k8s.KubernetesObject;
 
   beforeEach(function (done) {
     if (!fs.existsSync("./kubeconfig")) {
@@ -28,7 +28,7 @@ describe('update Node', function () {
     name = crypto.randomBytes(10).toString('hex');
 
     // k8s client
-    var kc = new k8s.KubeConfig();
+    const kc = new k8s.KubeConfig();
     kc.loadFromDefault();
     client = k8s.KubernetesObjectApi.makeApiClient(kc);
 
@@ -45,19 +45,18 @@ describe('update Node', function () {
     existingObject.metadata.name = name + "-existing";
 
     // create object
-    client.create(existingObject).then((res) => {}).catch((err) => {});
-
+    client.create(existingObject)
   });
 
   afterEach(function (done) {
     helper.unload();
     helper.stopServer(done);
 
-    client.delete(object).then((res) => {}).catch((err) => {});
+    client.delete(existingObject)
   });
 
   it("should be loaded", (done) => {
-    var flow = [
+    const flow = [
         { id: "n1", type: "update", name: "test", cluster: "cfg" },
         { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
     ];
@@ -65,7 +64,7 @@ describe('update Node', function () {
       register(RED);
       registerClusterConfig(RED);
     }, flow, function () {
-      var n1 = helper.getNode("n1");
+      const n1 = helper.getNode("n1") as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       try {
         n1.should.have.property('name', 'test');
         done();
@@ -76,7 +75,7 @@ describe('update Node', function () {
   })
 
   it('should be loaded in exported flow', function (done) {
-    var flow = [
+    const flow = [
       { id:"3912a37a.c3818c", type:"update", cluster:"e20cf249a8b5dc64",z:"e316ac4b.c85a2", name:"test",x:240,y:320,wires: [[]]},
       { id: "e20cf249a8b5dc64", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
   ];
@@ -84,7 +83,7 @@ describe('update Node', function () {
       register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n1 = helper.getNode("3912a37a.c3818c");
+      const n1 = helper.getNode("3912a37a.c3818c") as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       try {
         n1.should.have.property('name', 'test');
         done();
@@ -95,7 +94,7 @@ describe('update Node', function () {
   });
 
   it('should do nothing object', function (done) {
-    var flow = [
+    const flow = [
       { id: "n1", type: "update", name: "test", cluster: "cfg", wires:[["n2"]] },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
       { id: "n2", type: "helper" },
@@ -104,11 +103,11 @@ describe('update Node', function () {
       register(RED);
       registerClusterConfig(RED);
   }, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      const n2 = helper.getNode("n2");
+      const n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data = msg.object;
+         const data = msg.object;
          if (data.metadata.name == name) {
             done();
          } else{
@@ -118,12 +117,13 @@ describe('update Node', function () {
           done(err);
         }
       });
-      n1.receive({object: object});
+      const msg: PayloadType = {object: object, _msgid: "test"};
+      n1.receive(msg);
     });
   });
 
   it('should update object', function (done) {
-    var flow = [
+    const flow = [
       { id: "n1", type: "update", name: "test", cluster: "cfg", wires:[["n2"]] },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
       { id: "n2", type: "helper" },
@@ -135,11 +135,11 @@ describe('update Node', function () {
 
       existingObject.metadata.labels = {"test": "foo"};
 
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
+      const n2 = helper.getNode("n2");
+      const n1 = helper.getNode("n1");
       n2.on("input", function (msg: PayloadType) {
         try {
-         let data = msg.object;
+         const data = msg.object;
          if (data.metadata.labels["test"] != "test") {
             done();
          } else{
@@ -149,7 +149,8 @@ describe('update Node', function () {
           done(err);
         }
       });
-      n1.receive({object: existingObject});
+      const msg: PayloadType = {object: existingObject, _msgid: "test"};
+      n1.receive(msg);
     });
   });
 

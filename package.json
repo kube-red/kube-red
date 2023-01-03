@@ -1,13 +1,26 @@
 {
-  "name": "node-red-kube-red",
-  "version": "0.0.1-dev",
-  "description": "",
+  "name": "@kube-red/node-red-kube-red",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kube-red/kube-red.git"
+  },
+  "version": "0.0.4-dev",
+  "description": "A node-red node that supports interacting with kubernetes clusters (get, delete, create, list, watch, upsert)",
   "scripts": {
-    "build": "npx gulp build",
+    "build": "npm run build-gulp",
+    "lint": "eslint . --ext .ts",
+    "build-gulp": "npx gulp build",
     "clean": "npx gulp clean",
     "nodered": "npx gulp nodered",
     "test": "ts-mocha --require hack/async-dump \"src/**/*.test.ts\""
   },
+  "keywords": [
+    "node-red",
+    "node",
+    "nodered",
+    "k8s",
+    "kubernetes"
+  ],
   "author": "",
   "license": "ISC",
   "files": [
@@ -34,13 +47,20 @@
     "@types/node-red-node-test-helper": "^0.2.2",
     "@types/nodemon": "^1.19.2",
     "@types/vinyl-source-stream": "^0.0.30",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
     "browser-sync": "^2.27.10",
     "del": "^6.1.0",
+    "eslint": "^8.31.0",
+    "eslint-config-standard-with-typescript": "^26.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-promise": "^6.1.1",
     "gulp": "^4.0.2",
     "gulp-buffer": "^0.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-flatmap": "^1.0.2",
     "gulp-header": "^2.0.9",
+    "gulp-headerfooter": "^1.0.3",
     "gulp-htmlmin": "^5.0.1",
     "gulp-include": "^2.4.1",
     "gulp-mode": "^1.1.0",

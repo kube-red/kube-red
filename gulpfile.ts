@@ -10,7 +10,7 @@ import source from 'vinyl-source-stream';
 import buffer from 'gulp-buffer';
 import gulpWrap from 'gulp-wrap';
 import concat from 'gulp-concat';
-import header from 'gulp-header';
+
 import merge from 'merge-stream';
 import flatmap from 'gulp-flatmap';
 import path from 'path';
@@ -18,15 +18,13 @@ import nodemon from 'gulp-nodemon';
 
 browsersync.create();
 
-const include = require('gulp-include');
-const mode = require('gulp-mode')();
+import headerfooter = require("gulp-headerfooter");
 
+const mode = require('gulp-mode')(); // eslint-disable-line @typescript-eslint/no-var-requires
 const project = ts.createProject('./tsconfig.json')
-const editorProject = ts.createProject('./tsconfig.editor.json')
 
 gulp.task('clean', (done) => {
     del.sync(['dist/**']);
-    del.sync('resources/editor.js');
     done();
 });
 
@@ -38,9 +36,9 @@ gulp.task("editor-html", () => {
                 collapseWhitespace: false,
                 minifyCSS: true,
             })).pipe(gulpWrap(
-                '<script type="text/html" data-template-name="<%= data.type %>"><%= data.contents %></script>',
+                 '<script type="text/html" data-template-name="<%= data.type %>"><%= data.contents %></script>',
                 { type: moduleName }, // additional variable, next to "contents", see https://github.com/adamayres/gulp-wrap#usage
-                { variable: 'data' }, // The data object variable name, see https://lodash.com/docs/4.17.15#template
+                { variable: "data" }, // The data object variable name, see https://lodash.com/docs/4.17.15#template
             ));
         }));
 
@@ -53,14 +51,17 @@ gulp.task("editor-html", () => {
             })).pipe(gulpWrap(
                 '<script type="text/html" data-help-name="<%= data.type %>"><%= data.contents %></script>',
                 { type: moduleName }, // additional variable, next to "contents", see https://github.com/adamayres/gulp-wrap#usage
-                { variable: 'data' }, // The data object variable name, see https://lodash.com/docs/4.17.15#template
+                { variable: "data" }, // The data object variable name, see https://lodash.com/docs/4.17.15#template
             ));
         }));
 
-    return merge([editor, help])
-        .pipe(concat('kube-red.html'))
-        .pipe(header('<script type="text/javascript" src="resources/node-red-kube-red/editor.js"></script>'))
-        .pipe(gulp.dest('dist'));
+    const script = gulp.src("dist/editor.js")
+        .pipe(headerfooter('<script type="text/javascript">', '</script>'));
+
+
+    return merge([editor, help, script])
+        .pipe(concat("kube-red.html"))
+        .pipe(gulp.dest("dist"));
 });
 
 gulp.task("build-node", () => {
@@ -74,43 +75,41 @@ gulp.task("build-node", () => {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task("build-editor", (done) => {
+gulp.task("build-editor", () => {
     return mode.development(rollupStream({
         input: 'src/editor.ts',
         output: {
             format: 'iife',
             sourcemap: true,
-            sourcemapPathTransform: (relativePath, sourcemapPath) => {
+            sourcemapPathTransform: (relativePath) => {
                 return relativePath.replace(/^\.\.\/src\//, "src/");
             }
         },
         plugins: [
             rollupTypescript({
-                tsconfig: 'tsconfig.editor.json',
+                tsconfig: "tsconfig.editor.json",
             }),
         ],
         external: [],
     }))
         .pipe(mode.production(rollupStream({
-            input: 'src/editor.ts',
+            input: "src/editor.ts",
             output: {
-                format: 'iife',
+                format: "iife",
             },
             plugins: [
                 rollupTypescript({
-                    tsconfig: 'tsconfig.editor.json',
+                    tsconfig: "tsconfig.editor.json",
                 }),
             ],
             external: [],
         })))
-        .pipe(source('editor.js'))
+        .pipe(source("editor.js"))
         .pipe(buffer())
-        .pipe(gulp.dest('resources'))
+        .pipe(gulp.dest("./dist"))
 });
 
-gulp.task("build", gulp.series(
-    gulp.parallel(["build-node", "build-editor", "editor-html"]),
-));
+gulp.task("build", gulp.series(["build-node", "build-editor", "editor-html"]));
 
 gulp.task("nodered", (done) => {
     nodemon({

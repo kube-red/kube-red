@@ -1,0 +1,53 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [created]
+jobs:
+  npmjs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup kind
+        uses: helm/kind-action@v1.4.0
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19
+          registry-url: 'https://registry.npmjs.org'
+      - name: install dependencies
+        run: npm install
+      - name: run tests
+        run: |
+          echo ${KUBECONFIG} > kubeconfig
+          npm test
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  github:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup kind
+        uses: helm/kind-action@v1.4.0
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@kube-red'
+      - name: install dependencies
+        run: npm install
+      - name: run tests
+        run: |
+          echo ${KUBECONFIG} > kubeconfig
+          npm test
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

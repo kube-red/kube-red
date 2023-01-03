@@ -1,4 +1,4 @@
-import { NodeDef, NodeAPI,  NodeMessageInFlow } from "node-red";
+import { NodeDef, NodeAPI } from "node-red";
 import { Node, RED } from "../../node";
 import { Controller } from "./types";
 
@@ -29,19 +29,20 @@ class ListNode extends Node {
         this.namespace = config.namespace;
         this.name = config.name;
 
-        let configNode: any
-        configNode = RED.nodes.getNode(config.cluster);
+        const configNode = RED.nodes.getNode(config.cluster) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
         if (configNode === undefined) {
             this.error("Cluster config not found");
             return;
         }
 
-        var kc = new k8s.KubeConfig();
+        const kc = new k8s.KubeConfig();
         kc.loadFromOptions(configNode.k8s);
         this.kc = kc;
 
-        this.on("input", async function(msg: PayloadType,send,done) {
-            let client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
+        const client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
+
+        this.on("input", async function(msg: PayloadType,send) {
+
             let spec: k8s.KubernetesObject = {};
 
             spec = msg.object || {};
