@@ -66,12 +66,11 @@ gulp.task("editor-html", () => {
 
 gulp.task("build-node", () => {
     return gulp.src(["src/**/*.ts", "!gulpfile.ts", "!src/**/editor.ts"])
-        .pipe(mode.development(sourcemaps.init()))
         .pipe(project())
-        .pipe(mode.development(sourcemaps.write(".", {
+        .pipe(sourcemaps.write(".", {
             includeContent: false,
             sourceRoot: () => ".",
-        })))
+        }))
         .pipe(gulp.dest("./dist"));
 });
 
