@@ -7,7 +7,7 @@
   "version": "0.0.4-dev",
   "description": "A node-red node that supports interacting with kubernetes clusters (get, delete, create, list, watch, upsert)",
   "scripts": {
-    "build": "npm run eslint && npm run build-gulp",
+    "build": "npm run lint && npm run build-gulp",
     "lint": "eslint . --ext .ts",
     "build-gulp": "npx gulp build",
     "clean": "npx gulp clean",
