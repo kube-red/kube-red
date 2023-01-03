@@ -1,0 +1,27 @@
+# test locally:
+# act pull_request
+name: lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  unit:
+    runs-on: [ubuntu-latest]
+    timeout-minutes: 8
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup kind
+        uses: helm/kind-action@v1.4.0
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - name: install dependencies
+        run: npm install
+      - name: run lint
+        run: npm run lint

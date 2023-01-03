@@ -37,7 +37,7 @@ function oneditsave() {
 
 function oneditprepare() {
     // Add hooks to disable form fields when incluster is checked
-    var container = $("#node-input-incluster");
+    const container = $("#node-input-incluster");
     container.on('change', function() {
         $("#node-input-server").prop("disabled", container.is(":checked"));
         $("#node-input-user").prop("disabled", container.is(":checked"));

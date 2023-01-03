@@ -1,4 +1,4 @@
-import { NodeDef, NodeAPI, NodeMessageInFlow } from "node-red";
+import { NodeDef, NodeAPI } from "node-red";
 import { Node } from "../node";
 import * as k8s from '@kubernetes/client-node';
 import { ClusterConfig, Controller } from "./types";
@@ -15,7 +15,7 @@ class ClusterConfigNode extends Node {
     constructor(c: ClusterConfigProperties) {
         super(c);
 
-        var kc = new k8s.KubeConfig();
+        const kc = new k8s.KubeConfig();
         if (c.config.incluster) {
             kc.loadFromDefault();
         } else {

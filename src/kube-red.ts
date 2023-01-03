@@ -1,4 +1,4 @@
-import { NodeDef, NodeAPI, Node, NodeMessageInFlow } from "node-red";
+import { NodeAPI } from "node-red";
 import registerClusterConfig from "./cluster-config/node";
 import registerUpsert from "./generic/upsert/node";
 import registerGet from "./generic/get/node";

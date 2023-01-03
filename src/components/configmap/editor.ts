@@ -28,13 +28,13 @@ const ConfigMapEditor: EditorNodeDef<ConfigMapEditorProperties> = {
     },
     oneditprepare: function() {
         // Action config container
-        var container = $('#node-input-config-container')
+        const container = $('#node-input-config-container')
 
-        var row1 = $('<div/>').appendTo(container);
-        var row2 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
+        const row1 = $('<div/>').appendTo(container);
+        const row2 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
 
         $('<label/>',{for:"node-input-action",style:"width:110px; margin-right:10px;"}).text("Action").appendTo(row1);
-        var propertyAction = $('<select/>',{style:"width:250px",class:"node-input-action"})
+        const propertyAction = $('<select/>',{style:"width:250px",class:"node-input-action"})
             .appendTo(row1);
 
         Controller.actions.forEach(action => {
@@ -45,7 +45,7 @@ const ConfigMapEditor: EditorNodeDef<ConfigMapEditorProperties> = {
         });
 
         $('<label/>',{for:"node-input-namespace",style:"width:110px; margin-right:10px;"}).text("Namespace").appendTo(row2);
-        var propertyNamespace = $('<input/>',{style:"width:250px",class:"node-input-namespace",type:"text"})
+        const propertyNamespace = $('<input/>',{style:"width:250px",class:"node-input-namespace",type:"text"})
             .appendTo(row2)
             .typedInput({types:['str']});
 
@@ -55,8 +55,8 @@ const ConfigMapEditor: EditorNodeDef<ConfigMapEditorProperties> = {
     },
     oneditsave: function() {
         // Find client source details
-        var property = $("#node-input-config-container");
-        var node = this;
+        const property = $("#node-input-config-container");
+        const node = this; // eslint-disable-line
         node.action = property.find(".node-input-action :selected").text();
         node.namespace = property.find(".node-input-namespace").typedInput('value');
     },
