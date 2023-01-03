@@ -11,7 +11,7 @@ import helper = require("node-red-node-test-helper")
 helper.init(require.resolve('node-red'));
 
 describe('list Node', function () {
-  let client: k8s.KubernetesObjectApi;
+  let client: k8s.KubernetesObjectApi; // eslint-disable-line
   let object: k8s.KubernetesObject;
 
   beforeEach(function (done) {

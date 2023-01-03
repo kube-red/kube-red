@@ -1,30 +1,30 @@
-import * as gulp from "gulp";
-import * as ts from "gulp-typescript";
-import * as sourcemaps from "gulp-sourcemaps";
-import * as del from "del";
-import browsersync from "browser-sync";
-import htmlmin from "gulp-htmlmin";
-import rollupStream from "@rollup/stream";
-import rollupTypescript from "@rollup/plugin-typescript";
-import source from "vinyl-source-stream";
-import buffer from "gulp-buffer";
-import gulpWrap from "gulp-wrap";
-import concat from "gulp-concat";
-import merge from "merge-stream";
-import flatmap from "gulp-flatmap";
-import path from "path";
-import nodemon from "gulp-nodemon";
+import * as gulp from 'gulp';
+import * as ts from 'gulp-typescript'
+import * as sourcemaps from 'gulp-sourcemaps';
+import * as del from 'del';
+import browsersync from 'browser-sync';
+import htmlmin from 'gulp-htmlmin';
+import rollupStream from '@rollup/stream';
+import rollupTypescript from '@rollup/plugin-typescript';
+import source from 'vinyl-source-stream';
+import buffer from 'gulp-buffer';
+import gulpWrap from 'gulp-wrap';
+import concat from 'gulp-concat';
+
+import merge from 'merge-stream';
+import flatmap from 'gulp-flatmap';
+import path from 'path';
+import nodemon from 'gulp-nodemon';
 
 browsersync.create();
 
 import headerfooter = require("gulp-headerfooter");
-import mode = require("gulp-mode");
 
-const project = ts.createProject("./tsconfig.json");
+const mode = require('gulp-mode')(); // eslint-disable-line @typescript-eslint/no-var-requires
+const project = ts.createProject('./tsconfig.json')
 
-gulp.task("clean", (done) => {
-    del.sync(["dist/**"]);
-    del.sync("resources/editor.js");
+gulp.task('clean', (done) => {
+    del.sync(['dist/**']);
     done();
 });
 
@@ -66,19 +66,20 @@ gulp.task("editor-html", () => {
 
 gulp.task("build-node", () => {
     return gulp.src(["src/**/*.ts", "!gulpfile.ts", "!src/**/editor.ts"])
+        .pipe(mode.development(sourcemaps.init()))
         .pipe(project())
-        .pipe(sourcemaps.write(".", {
+        .pipe(mode.development(sourcemaps.write('.', {
             includeContent: false,
-            sourceRoot: () => ".",
-        }))
-        .pipe(gulp.dest("./dist"));
+            sourceRoot: () => '.',
+        })))
+        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task("build-editor", () => {
     return mode.development(rollupStream({
-        input: "src/editor.ts",
+        input: 'src/editor.ts',
         output: {
-            format: "iife",
+            format: 'iife',
             sourcemap: true,
             sourcemapPathTransform: (relativePath) => {
                 return relativePath.replace(/^\.\.\/src\//, "src/");
