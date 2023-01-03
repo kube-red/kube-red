@@ -19,6 +19,7 @@ import nodemon from 'gulp-nodemon';
 browsersync.create();
 
 const include = require('gulp-include');
+const headerfooter = require('gulp-headerfooter');
 const mode = require('gulp-mode')();
 
 const project = ts.createProject('./tsconfig.json')
@@ -57,9 +58,12 @@ gulp.task("editor-html", () => {
             ));
         }));
 
-    return merge([editor, help])
+    const script = gulp.src("dist/editor.js")
+        .pipe(headerfooter('<script type="text/javascript">', '</script>'));
+
+
+    return merge([editor, help, script])
         .pipe(concat('kube-red.html'))
-        .pipe(header('<script type="text/javascript" src="resources/@kube-red/node-red-kube-red/editor.js"></script>')) // must match package name
         .pipe(gulp.dest('dist'));
 });
 
@@ -105,12 +109,10 @@ gulp.task("build-editor", (done) => {
         })))
         .pipe(source('editor.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('resources'))
+        .pipe(gulp.dest('./dist'))
 });
 
-gulp.task("build", gulp.series(
-    gulp.parallel(["build-node", "build-editor", "editor-html"]),
-));
+gulp.task("build", gulp.series(["build-node", "build-editor", "editor-html"]));
 
 gulp.task("nodered", (done) => {
     nodemon({
