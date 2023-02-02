@@ -1,0 +1,85 @@
+[
+    {
+        "id": "199c9ae1713cf88e",
+        "type": "update",
+        "z": "32d6d7890a1ab25e",
+        "nodename": "",
+        "cluster": "70768b05450c21bc",
+        "x": 450,
+        "y": 340,
+        "wires": [
+            [
+                "7a56a6bde2a3cff0"
+            ]
+        ]
+    },
+    {
+        "id": "7a56a6bde2a3cff0",
+        "type": "json",
+        "z": "32d6d7890a1ab25e",
+        "name": "",
+        "property": "object",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 340,
+        "wires": [
+            [
+                "ebe41e7742154f3c"
+            ]
+        ]
+    },
+    {
+        "id": "ebe41e7742154f3c",
+        "type": "debug",
+        "z": "32d6d7890a1ab25e",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "object",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "3371ce0a6e067d32",
+        "type": "inject",
+        "z": "32d6d7890a1ab25e",
+        "name": "click me to update namespace labels",
+        "props": [
+            {
+                "p": "object",
+                "v": "{     \"apiVersion\": \"v1\",     \"kind\": \"Namespace\",     \"metadata\": {         \"name\": \"kube-red-ns\",         \"labels\": {             \"name\": \"kube-red-ns\"         }     } }",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 180,
+        "y": 340,
+        "wires": [
+            [
+                "199c9ae1713cf88e"
+            ]
+        ]
+    },
+    {
+        "id": "70768b05450c21bc",
+        "type": "cluster-config",
+        "nodename": "",
+        "config": {
+            "incluster": true,
+            "server": "https://api.server:8443",
+            "user": "cluster-admin",
+            "password": ""
+        }
+    }
+]

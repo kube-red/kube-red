@@ -74,6 +74,10 @@ class UpsertNode extends Node {
                     msg.object = response.body
                     this.send(msg);
                 } catch (e) {
+                    if (e.body.message ) {
+                        this.error(e.body.message);
+                        return;
+                    }
                     this.error(e);
                 }
             }

@@ -65,7 +65,11 @@ class UpdateNode extends Node {
                 // else if not patched, just send original message
                 this.send(msg);
             } catch (e) {
-                this.send(e);
+                if (e.body.message ) {
+                    this.error(e.body.message);
+                    return;
+                }
+                this.error(e);
             }
         });
     }

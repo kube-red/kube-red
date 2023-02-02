@@ -1,0 +1,159 @@
+[
+    {
+        "id": "c9f139a43061a874",
+        "type": "get",
+        "z": "32d6d7890a1ab25e",
+        "nodename": "",
+        "cluster": "70768b05450c21bc",
+        "apiversion": "",
+        "kind": "",
+        "namespace": "",
+        "name": "",
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "5bed29e51f9c40e3"
+            ]
+        ]
+    },
+    {
+        "id": "e9f4791cee638e21",
+        "type": "inject",
+        "z": "32d6d7890a1ab25e",
+        "name": "click me to get namespace",
+        "props": [
+            {
+                "p": "object",
+                "v": "{     \"apiVersion\": \"v1\",     \"kind\": \"Namespace\",     \"metadata\": {         \"name\": \"kube-red-ns\"     } }",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "c9f139a43061a874"
+            ]
+        ]
+    },
+    {
+        "id": "310c33e8cdf534b9",
+        "type": "debug",
+        "z": "32d6d7890a1ab25e",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "object",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "5bed29e51f9c40e3",
+        "type": "json",
+        "z": "32d6d7890a1ab25e",
+        "name": "",
+        "property": "object",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 160,
+        "wires": [
+            [
+                "310c33e8cdf534b9"
+            ]
+        ]
+    },
+    {
+        "id": "a6fa0689b5ca741f",
+        "type": "get",
+        "z": "32d6d7890a1ab25e",
+        "nodename": "",
+        "cluster": "70768b05450c21bc",
+        "apiversion": "v1",
+        "kind": "Namespace",
+        "namespace": "",
+        "name": "kube-red-ns",
+        "x": 430,
+        "y": 220,
+        "wires": [
+            [
+                "241dc04a2a64787d"
+            ]
+        ]
+    },
+    {
+        "id": "99cbba3dbd2e3385",
+        "type": "inject",
+        "z": "32d6d7890a1ab25e",
+        "name": "click me to TRIGGER get namespace",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 190,
+        "y": 220,
+        "wires": [
+            [
+                "a6fa0689b5ca741f"
+            ]
+        ]
+    },
+    {
+        "id": "d4222c97ee062f32",
+        "type": "debug",
+        "z": "32d6d7890a1ab25e",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "object",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "241dc04a2a64787d",
+        "type": "json",
+        "z": "32d6d7890a1ab25e",
+        "name": "",
+        "property": "object",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 220,
+        "wires": [
+            [
+                "d4222c97ee062f32"
+            ]
+        ]
+    },
+    {
+        "id": "70768b05450c21bc",
+        "type": "cluster-config",
+        "nodename": "",
+        "config": {
+            "incluster": true,
+            "server": "https://api.server:8443",
+            "user": "cluster-admin",
+            "password": ""
+        }
+    }
+]

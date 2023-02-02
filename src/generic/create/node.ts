@@ -64,6 +64,10 @@ class CreateNode extends Node {
                 this.send(msg);
                 return;
             } catch (e) {
+                if (e.body.message ) {
+                    this.error(e.body.message);
+                    return;
+                }
                 this.error(e);
             }
         });
