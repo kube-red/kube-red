@@ -10,6 +10,7 @@ import crypto = require("crypto");
 import helper = require("node-red-node-test-helper")
 
 helper.init(require.resolve('node-red'));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('update Node', function () {
   let name: string
@@ -43,16 +44,11 @@ describe('update Node', function () {
 
     existingObject = JSON.parse(JSON.stringify(object)); // deep copy
     existingObject.metadata.name = name + "-existing";
-
-    // create object
-    client.create(existingObject)
   });
 
   afterEach(function (done) {
     helper.unload();
     helper.stopServer(done);
-
-    client.delete(existingObject)
   });
 
   it("should be loaded", (done) => {
@@ -94,6 +90,10 @@ describe('update Node', function () {
   });
 
   it('should do nothing object', function (done) {
+     // create object
+     client.create(existingObject);
+     sleep(1000);
+
     const flow = [
       { id: "n1", type: "update", name: "test", cluster: "cfg", wires:[["n2"]] },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
@@ -117,7 +117,7 @@ describe('update Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, _msgid: "test"};
+      const msg: PayloadType = {object: object, _msgid: "test6"};
       n1.receive(msg);
     });
   });
@@ -149,7 +149,7 @@ describe('update Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: existingObject, _msgid: "test"};
+      const msg: PayloadType = {object: existingObject, _msgid: "test7"};
       n1.receive(msg);
     });
   });
