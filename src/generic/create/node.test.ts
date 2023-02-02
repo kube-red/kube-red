@@ -1,6 +1,5 @@
 import { NodeAPI } from "node-red";
 import { afterEach, beforeEach, describe, it } from "node:test";
-import { assert } from 'tsafe/assert';
 import register from "./node";
 import registerClusterConfig from "../../cluster-config/node";
 import * as k8s from '@kubernetes/client-node';
@@ -21,7 +20,7 @@ describe('create Node', function () {
 
   beforeEach(function (done) {
     if (!fs.existsSync("./kubeconfig")) {
-      done(new Error("kubeconfig file not found"))
+      done("kubeconfig file not found")
     }
 
     helper.startServer(done);
@@ -114,7 +113,7 @@ describe('create Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, _msgid: "test1"};
+      const msg: PayloadType = {object: object, _msgid: name};
       n1.receive(msg);
     });
   });

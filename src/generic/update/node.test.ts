@@ -117,7 +117,7 @@ describe('update Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, _msgid: "test6"};
+      const msg: PayloadType = {object: object, _msgid: name};
       n1.receive(msg);
     });
   });
@@ -149,7 +149,7 @@ describe('update Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: existingObject, _msgid: "test7"};
+      const msg: PayloadType = {object: existingObject, _msgid: name};
       n1.receive(msg);
     });
   });

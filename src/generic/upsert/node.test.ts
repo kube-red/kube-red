@@ -117,7 +117,7 @@ describe('upsert Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, _msgid: "test8"};
+      const msg: PayloadType = {object: object, _msgid: name};
       n1.receive(msg);
     });
   });
@@ -149,7 +149,7 @@ describe('upsert Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: existingObject, _msgid: "test9"};
+      const msg: PayloadType = {object: existingObject, _msgid: name};
       n1.receive(msg);
     });
   });
