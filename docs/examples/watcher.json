@@ -1,0 +1,64 @@
+[
+    {
+        "id": "5401dacca2705566",
+        "type": "watcher",
+        "z": "32d6d7890a1ab25e",
+        "nodename": "",
+        "cluster": "70768b05450c21bc",
+        "apiversion": "v1",
+        "kind": "namespaces",
+        "namespace": "",
+        "name": "",
+        "x": 370,
+        "y": 460,
+        "wires": [
+            [
+                "3ff0606b04ff8ee6"
+            ]
+        ]
+    },
+    {
+        "id": "3ff0606b04ff8ee6",
+        "type": "json",
+        "z": "32d6d7890a1ab25e",
+        "name": "",
+        "property": "object",
+        "action": "",
+        "pretty": false,
+        "x": 590,
+        "y": 460,
+        "wires": [
+            [
+                "52b64b418a7d5d28"
+            ]
+        ]
+    },
+    {
+        "id": "52b64b418a7d5d28",
+        "type": "debug",
+        "z": "32d6d7890a1ab25e",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "object",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "70768b05450c21bc",
+        "type": "cluster-config",
+        "nodename": "",
+        "config": {
+            "incluster": true,
+            "server": "https://api.server:8443",
+            "user": "cluster-admin",
+            "password": ""
+        }
+    }
+]

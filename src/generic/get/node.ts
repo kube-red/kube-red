@@ -90,7 +90,11 @@ class GetNode extends Node {
                 this.error("object not found");
                 return;
             } catch (e) {
-                    this.error(e);
+                if (e.body.message ) {
+                    this.error(e.body.message);
+                    return;
+                }
+                this.error(e);
             }
         });
     }

@@ -77,8 +77,12 @@ class WatcherNode extends Node {
                 }
                 msg.object = apiObj;
                 this.send(msg);
-            }, (err) => {
-                this.error(err);
+            }, (e) => {
+                if (e.body.message ) {
+                    this.error(e.body.message);
+                    return;
+                }
+                this.error(e);
             });
         };
 

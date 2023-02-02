@@ -1,0 +1,85 @@
+[
+    {
+        "id": "7a73c8675cc16dde",
+        "type": "inject",
+        "z": "32d6d7890a1ab25e",
+        "name": "click me to create namespace",
+        "props": [
+            {
+                "p": "object",
+                "v": "{     \"apiVersion\": \"v1\",     \"kind\": \"Namespace\",     \"metadata\": {         \"name\": \"kube-red-ns\"     } }",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "a8f3c4161f1e838c"
+            ]
+        ]
+    },
+    {
+        "id": "a8f3c4161f1e838c",
+        "type": "upsert",
+        "z": "32d6d7890a1ab25e",
+        "nodename": "",
+        "cluster": "70768b05450c21bc",
+        "x": 430,
+        "y": 80,
+        "wires": [
+            [
+                "eea15404b2b756c6"
+            ]
+        ]
+    },
+    {
+        "id": "eea15404b2b756c6",
+        "type": "json",
+        "z": "32d6d7890a1ab25e",
+        "name": "",
+        "property": "object",
+        "action": "",
+        "pretty": false,
+        "x": 590,
+        "y": 80,
+        "wires": [
+            [
+                "580640276289de1f"
+            ]
+        ]
+    },
+    {
+        "id": "580640276289de1f",
+        "type": "debug",
+        "z": "32d6d7890a1ab25e",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "object",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "70768b05450c21bc",
+        "type": "cluster-config",
+        "nodename": "",
+        "config": {
+            "incluster": true,
+            "server": "https://api.server:8443",
+            "user": "cluster-admin",
+            "password": ""
+        }
+    }
+]

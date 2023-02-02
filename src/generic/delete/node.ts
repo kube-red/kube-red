@@ -80,7 +80,11 @@ class DeleteNode extends Node {
                 this.send(msg);
                 return;
             } catch (e) {
-                    this.error(e);
+                if (e.body.message ) {
+                    this.error(e.body.message);
+                    return;
+                }
+                this.error(e);
             }
         });
     }
