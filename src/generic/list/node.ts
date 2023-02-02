@@ -39,6 +39,7 @@ class ListNode extends Node {
         kc.loadFromOptions(configNode.k8s);
         this.kc = kc;
 
+        console.log(this.kc)
         const client = k8s.KubernetesObjectApi.makeApiClient(this.kc);
 
         this.on("input", async function(msg: PayloadType,send) {
@@ -84,7 +85,8 @@ class ListNode extends Node {
                 send(msg);
                 return;
             } catch (e) {
-                    this.error(e);
+                console.log(e);
+                this.error(e);
             }
         });
     }
