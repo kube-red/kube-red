@@ -9,6 +9,7 @@ import PayloadType from "../../shared/types";
 import helper = require("node-red-node-test-helper")
 
 helper.init(require.resolve('node-red'));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('list Node', function () {
   let client: k8s.KubernetesObjectApi; // eslint-disable-line
@@ -102,7 +103,7 @@ describe('list Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, payload: "test", _msgid: "test"};
+      const msg: PayloadType = {object: object, payload: "test", _msgid: "test5"};
       n1.receive(msg);
     });
   });

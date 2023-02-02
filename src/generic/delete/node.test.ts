@@ -10,6 +10,7 @@ import crypto = require("crypto");
 import helper = require("node-red-node-test-helper")
 
 helper.init(require.resolve('node-red'));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('delete Node', function () {
   let name: string
@@ -40,16 +41,11 @@ describe('delete Node', function () {
         name: name,
       },
     }
-
-    client.create(object)
-
   });
 
   afterEach(function (done) {
     helper.unload();
     helper.stopServer(done);
-
-    client.delete(object)
   });
 
   it("should be loaded", (done) => {
@@ -90,8 +86,10 @@ describe('delete Node', function () {
     });
   });
 
-
   it('should delete object', function (done) {
+    client.create(object);
+    sleep(1000);
+
     const flow = [
       { id: "n1", type: "delete", name: "test", cluster: "cfg", wires:[["n2"]] },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
@@ -107,6 +105,7 @@ describe('delete Node', function () {
       n2.on("input", function (msg: PayloadType) {
         try {
          const data =  msg.object as k8s.V1Status;
+         console.log(data)
          if (data.status["phase"] == 'Terminating') {
             done();
          } else{
@@ -116,7 +115,7 @@ describe('delete Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, _msgid: "test"};
+      const msg: PayloadType = {object: object, _msgid: name};
       n1.receive(msg);
     });
   });

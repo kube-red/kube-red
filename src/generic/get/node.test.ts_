@@ -10,6 +10,7 @@ import crypto = require("crypto");
 import helper = require("node-red-node-test-helper")
 
 helper.init(require.resolve('node-red'));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('get Node', function () {
   let name: string
@@ -40,16 +41,11 @@ describe('get Node', function () {
         name: name,
       },
     }
-
-    client.create(object)
-
   });
 
   afterEach(function (done) {
     helper.unload();
     helper.stopServer(done);
-
-    client.delete(object)
   });
 
   it("should be loaded", (done) => {
@@ -92,6 +88,11 @@ describe('get Node', function () {
 
   // There is some sync issues with k8s api to create namespace in async
   it('should get object', function (done) {
+    const result = client.create(object);
+    result.then().catch((err) => {
+      done(err);
+    });
+
     const flow = [
       { id: "n1", type: "get", name: "test", cluster: "cfg", wires:[["n2"]] },
       { id: "cfg", type: "cluster-config", name: "cluster", "config": {"incluster": true,}},
@@ -116,10 +117,9 @@ describe('get Node', function () {
           done(err);
         }
       });
-      const msg: PayloadType = {object: object, _msgid: "test"};
+      const msg: PayloadType = {object: object, _msgid: name};
       n1.receive(msg);
     });
   });
 
-  // TODO: test not found
 });
