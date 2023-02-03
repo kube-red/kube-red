@@ -17,6 +17,9 @@ import {Controller as UpdateController} from "./generic/update/types";
 import WatcherEditor from "./generic/watcher/editor";
 import {Controller as WatcherController} from "./generic/watcher/types";
 
+import NamespaceEditor from "./components/namespace/editor";
+import {Controller as NamespaceController} from "./components/namespace/types";
+
 declare const RED: EditorRED;
 
 // fetch discovered types from the backend,
@@ -27,6 +30,7 @@ declare const RED: EditorRED;
 //     RED.nodes.registerType("pods", PodsEditor);
 // }
 
+// generic nodes
 RED.nodes.registerType(ClusterConfigController.name, ClusterConfigEditor)
 RED.nodes.registerType(UpsertController.name, UpsertEditor)
 RED.nodes.registerType(GetController.name, GetEditor)
@@ -35,3 +39,6 @@ RED.nodes.registerType(ListController.name, ListEditor)
 RED.nodes.registerType(CreateController.name, CreateEditor)
 RED.nodes.registerType(UpdateController.name, UpdateEditor)
 RED.nodes.registerType(WatcherController.name, WatcherEditor)
+
+// specific nodes
+RED.nodes.registerType(NamespaceController.name, NamespaceEditor)

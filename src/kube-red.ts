@@ -8,6 +8,8 @@ import registerCreate from "./generic/create/node";
 import registerUpdate from "./generic/update/node";
 import registerWatcher from "./generic/watcher/node";
 
+import registerNamespace from "./components/namespace/node";
+
 export default function (RED: NodeAPI) {
     registerClusterConfig(RED);
     registerUpsert(RED);
@@ -17,4 +19,5 @@ export default function (RED: NodeAPI) {
     registerCreate(RED);
     registerUpdate(RED);
     registerWatcher(RED);
+    registerNamespace(RED);
 }
