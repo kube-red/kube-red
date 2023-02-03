@@ -85,8 +85,8 @@ class DeleteNode extends Node {
             } catch (e) {
                 this.status(utils.getErrorStatus(e));
 
-                if (e.body.message) {
-                    this.error(e.body.message);
+                if (e.body && e.body.message) {
+                    this.error(e.body && e.body.message);
                     return;
                 }
                 this.error(e);

@@ -82,7 +82,7 @@ class UpsertNode extends Node {
                     this.status(utils.getErrorStatus(e));
 
                     if (e.body && e.body.message) {
-                        this.error(e.body.message);
+                        this.error(e.body && e.body.message);
                         return;
                     }
                     this.error(e);
