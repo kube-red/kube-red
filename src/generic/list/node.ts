@@ -4,6 +4,7 @@ import { Controller } from "./types";
 
 import * as k8s from '@kubernetes/client-node';
 import PayloadType from "../../shared/types";
+import * as utils from "../../shared/status";
 
 export interface ListProperties extends NodeDef {
     cluster: string;
@@ -84,7 +85,9 @@ class ListNode extends Node {
                 send(msg);
                 return;
             } catch (e) {
-                if (e.body.message ) {
+                this.status(utils.getErrorStatus(e));
+
+                if (e.body.message) {
                     this.error(e.body.message);
                     return;
                 }

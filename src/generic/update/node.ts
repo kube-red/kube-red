@@ -4,6 +4,7 @@ import { Controller } from "./types";
 import PayloadType from "../../shared/types";
 
 import * as k8s from '@kubernetes/client-node';
+import * as utils from "../../shared/status";
 
 export interface UpdateProperties extends NodeDef {
     cluster: string;
@@ -57,6 +58,8 @@ class UpdateNode extends Node {
 
                         const response = await client.patch(spec);
                         msg.object = response.body
+
+                        this.status(utils.getNodeStatus(msg.object));
                         this.send(msg);
 
                         return;
@@ -65,7 +68,9 @@ class UpdateNode extends Node {
                 // else if not patched, just send original message
                 this.send(msg);
             } catch (e) {
-                if (e.body.message ) {
+                this.status(utils.getErrorStatus(e));
+
+                if (e.body.message) {
                     this.error(e.body.message);
                     return;
                 }

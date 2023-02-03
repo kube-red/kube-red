@@ -4,6 +4,7 @@ import { Controller } from "./types";
 import PayloadType from "../../shared/types";
 
 import * as k8s from '@kubernetes/client-node';
+import * as utils from "../../shared/status";
 
 export interface CreateProperties extends NodeDef {
     cluster: string;
@@ -61,10 +62,14 @@ class CreateNode extends Node {
                 // if not found - create
                 const responseCreate = await client.create(spec);
                 msg.object = responseCreate.body
+
+                this.status(utils.getNodeStatus(msg.object));
                 this.send(msg);
                 return;
             } catch (e) {
-                if (e.body.message ) {
+                this.status(utils.getErrorStatus(e));
+
+                if (e.body.message) {
                     this.error(e.body.message);
                     return;
                 }

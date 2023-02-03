@@ -4,6 +4,7 @@ import { Controller } from "./types";
 
 import * as k8s from '@kubernetes/client-node';
 import PayloadType from "../../shared/types";
+import * as utils from "../../shared/status";
 
 export interface GetProperties extends NodeDef {
     cluster: string;
@@ -83,6 +84,8 @@ class GetNode extends Node {
                 for (const item of response.body.items) {
                     if (item.metadata.name === spec.metadata.name) {
                         msg.object = item;
+
+                        this.status(utils.getNodeStatus(msg.object));
                         this.send(msg);
                         return;
                     }
@@ -90,7 +93,9 @@ class GetNode extends Node {
                 this.error("object not found");
                 return;
             } catch (e) {
-                if (e.body.message ) {
+                this.status(utils.getErrorStatus(e));
+
+                if (e.body.message) {
                     this.error(e.body.message);
                     return;
                 }

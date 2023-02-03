@@ -113,7 +113,7 @@ gulp.task("build", gulp.series(["build-node", "build-editor", "editor-html"]));
 
 gulp.task("nodered", (done) => {
     nodemon({
-        exec: "npm install --prefix .node-red . && node-red -u .node-red",
+        exec: "npm install -f --prefix .node-red . && node-red -u .node-red",
         watch: ["src"],
         tasks: ["build"],
         ext: "ts,html",
