@@ -4,6 +4,7 @@ import { Controller } from "./types";
 
 import * as k8s from '@kubernetes/client-node';
 import PayloadType from "../../shared/types";
+import * as utils from "../../shared/status";
 
 export interface DeleteProperties extends NodeDef {
     cluster: string;
@@ -77,11 +78,15 @@ class DeleteNode extends Node {
             try {
                 const response = await client.delete(spec);
                 msg.object = response.body;
+
+                this.status(utils.getNodeStatus(msg.object));
                 this.send(msg);
                 return;
             } catch (e) {
-                if (e.body.message ) {
-                    this.error(e.body.message);
+                this.status(utils.getErrorStatus(e));
+
+                if (e.body && e.body.message) {
+                    this.error(e.body && e.body.message);
                     return;
                 }
                 this.error(e);

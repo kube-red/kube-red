@@ -4,6 +4,7 @@ import { Controller } from "./types";
 
 import * as k8s from "@kubernetes/client-node";
 import PayloadType from "../../shared/types";
+import * as utils from "../../shared/status";
 
 export interface WatcherProperties extends NodeDef {
     cluster: string;
@@ -78,8 +79,10 @@ class WatcherNode extends Node {
                 msg.object = apiObj;
                 this.send(msg);
             }, (e) => {
-                if (e.body.message ) {
-                    this.error(e.body.message);
+                this.status(utils.getErrorStatus(e));
+
+                if (e.body && e.body.message) {
+                    this.error(e.body && e.body.message);
                     return;
                 }
                 this.error(e);

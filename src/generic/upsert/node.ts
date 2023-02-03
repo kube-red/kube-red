@@ -4,6 +4,7 @@ import { Controller } from "./types";
 import PayloadType from "../../shared/types";
 
 import * as k8s from '@kubernetes/client-node';
+import * as utils from "../../shared/status";
 
 export interface UpsertProperties extends NodeDef {
     cluster: string;
@@ -66,16 +67,22 @@ class UpsertNode extends Node {
                 // See: https://github.com/kubernetes/kubernetes/issues/97423
                 const response = await client.patch(spec);
                 msg.object = response.body;
+
+                this.status(utils.getNodeStatus(msg.object));
                 this.send(msg);
             } catch (e) {
                 // we did not get the resource, so it does not exist, so create it
                 try {
                     const response = await client.create(spec);
                     msg.object = response.body
+
+                    this.status(utils.getNodeStatus(msg.object));
                     this.send(msg);
                 } catch (e) {
-                    if (e.body.message ) {
-                        this.error(e.body.message);
+                    this.status(utils.getErrorStatus(e));
+
+                    if (e.body && e.body.message) {
+                        this.error(e.body && e.body.message);
                         return;
                     }
                     this.error(e);
