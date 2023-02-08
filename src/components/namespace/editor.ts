@@ -1,15 +1,17 @@
-import { EditorNodeDef, EditorNodeProperties } from 'node-red';
+import { EditorNodeDef, EditorNodeProperties, EditorRED } from 'node-red';
 import { Controller } from './types';
 import { Controller as ClusterConfigController} from '../../cluster-config/types';
-import Label from '../../shared/labels';
+
+declare const RED: EditorRED;
 
 export interface NamespaceEditorProperties extends EditorNodeProperties {
     nodename: string;
     cluster: string;
     name: string;
-    labels: Label[];
+    template: string;
 }
 
+let templateEditor: AceAjax.Editor | undefined;
 
 const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
     category: 'kubernetes',
@@ -20,7 +22,7 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         nodename: {value:""},
         cluster: {value: "", type: ClusterConfigController.name, required: true},
         name: { value: "" },
-        labels : { value: [{key: "", value:""}] },
+        template: { value: '' },
     },
     inputs:1,
     outputs:1,
@@ -28,52 +30,46 @@ const NamespaceEditor: EditorNodeDef<NamespaceEditorProperties> = {
         return this.nodename||Controller.name;
     },
     oneditprepare: function() {
-        function resizeConfig(config) {
-            const newWidth = config.width();
-            config.find('.red-ui-typedInput').typedInput("width",newWidth-150);
+        const $inputTemplate = $('#node-input-template');
 
-        }
-        $('#node-input-labels-container').css('min-height','150px').css('min-width','450px').editableList({
-            addItem: function(container,i,property: JQuery<HTMLElement>) {
-                const row1 = $('<div/>').appendTo(container);
-                const row2 = $('<div/>',{style:"margin-top:8px;"}).appendTo(container);
-
-                $('<label/>',{for:"node-input-labels-key",style:"width:110px; margin-right:10px;"}).text("Key").appendTo(row1);
-
-                const propertyKey = $('<input/>',{style:"width:250px",class:"node-input-labels-key",type:"text"})
-                    .appendTo(row1);
-
-                $('<label/>',{for:"node-input-labels-value",style:"width:110px; margin-right:10px;"}).text("Value").appendTo(row2);
-                const propertyValue = $('<input/>',{style:"width:250px",class:"node-input-labels-value",type:"text"})
-                    .appendTo(row2);
-
-                //propertyKey.typedInput('value',property.key);
-                //propertyValue.typedInput('value',property.value);
-
-                const newWidth = $("#node-input-labels-container").width();
-                resizeConfig(container);
-            },
-            resizeItem: resizeConfig,
-            removable: true,
-            sortable: false
+        templateEditor = RED.editor.createEditor({
+            id: 'node-input-template-editor',
+            mode: 'ace/mode/text',
+            value: $inputTemplate.val() as string,
         });
-
-        $("#node-input-labels-container").editableList('addItems',this.labels);
     },
-    oneditsave: function() {
-        const properties = $("#node-input-labels-container").editableList('items');
+    oneditresize: function() {
+        const $rows = $('#dialog-form>div:not(.node-text-editor-row)');
+        const $editorRow = $('#dialog-form>div.node-text-editor-row');
+        const $textEditor = $('.node-text-editor');
+        const $dialogForm = $('#dialog-form');
 
-        properties.each(function(i) {
-            const property = $(this);
-            const v: Label = {
-                key: property.find(".node-input-labels-key").val().toString(),
-                value: property.find(".node-input-labels-value").val().toString()
-            };
-            console.log(v)
-            node.labels.push(v);
+        let height = $dialogForm.height() ?? 0;
+        for (let i = 0; i < $rows.length; i++) {
+           const outerHeight = $($rows[i]).outerHeight(true);
+            if (typeof outerHeight === 'number') {
+                height -= outerHeight;
+            }
+        }
+        height -=
+            parseInt($editorRow.css('marginTop')) +
+            parseInt($editorRow.css('marginBottom'));
 
-        });
+        $textEditor.css('height', `${height}px`);
+        templateEditor?.resize();
+    },
+    oneditcancel: function () {
+        templateEditor?.destroy();
+        templateEditor = undefined;
+    },
+    oneditsave: function () {
+        const newValue = templateEditor?.getValue() ?? '';
+        $('#node-input-template').val(newValue);
+        templateEditor?.destroy();
+        templateEditor = undefined;
     },
 }
+
+
 
 export default NamespaceEditor;

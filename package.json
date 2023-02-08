@@ -89,6 +89,8 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.17.1",
     "@types/ws": "^8.5.3",
-    "test": "^3.2.1"
+    "lodash.merge": "^4.6.2",
+    "test": "^3.2.1",
+    "yaml": "^2.2.1"
   }
 }

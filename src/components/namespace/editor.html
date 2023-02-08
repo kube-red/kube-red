@@ -9,7 +9,7 @@
 </div>
 
 <div class="form-row" style="margin-bottom:0;">
-    <label><i class="fa fa-list"></i> Config</span></label>
+    <label><i class="fa fa-list"></i> Namespace</span></label>
 </div>
 
 <div class="form-row">
@@ -17,6 +17,18 @@
     <input type="text" id="node-input-name">
 </div>
 
-<div class="form-row node-input-labels-container-row">
-    <ol id="node-input-labels-container"></ol>
+
+<div class="form-row" style="position: relative; margin-bottom: 0px">
+    <label for="node-input-template">
+        <i class="fa fa-file-code-o"></i>Override
+    </label>
+    <input type="hidden" id="node-input-template" autofocus="autofocus" />
+</div>
+
+<div class="form-row node-text-editor-row">
+    <div
+        style="height: 250px; min-height: 150px"
+        class="node-text-editor"
+        id="node-input-template-editor"
+    ></div>
 </div>

@@ -2,6 +2,8 @@ import { NodeDef, NodeAPI } from "node-red";
 import { Node, RED } from "../../node";
 import { Controller } from "./types";
 import PayloadType from "../../shared/types";
+import merge from 'lodash.merge';
+import yaml from 'yaml';
 
 import * as k8s from '@kubernetes/client-node';
 import * as utils from "../../shared/status";
@@ -9,17 +11,20 @@ import * as utils from "../../shared/status";
 export interface NamespaceProperties extends NodeDef {
     cluster: string;
     name: string;
+    template: string;
 }
 
 class NamespaceNode extends Node {
     cluster: string;
     name: string;
+    template: string;
     kc: k8s.KubeConfig;
 
     constructor(config: NamespaceProperties) {
         super(config);
         this.cluster = config.cluster;
         this.name = config.name;
+        this.template = config.template;
 
         const configNode = RED.nodes.getNode(config.cluster) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
         if (configNode === undefined) {
@@ -33,11 +38,21 @@ class NamespaceNode extends Node {
 
         const client = kc.makeApiClient(k8s.CoreV1Api);
 
-        const obj =  new k8s.V1Namespace();
-        obj.metadata = new k8s.V1ObjectMeta();
+        const template =  new k8s.V1Namespace();
+        template.metadata = new k8s.V1ObjectMeta();
+        template.metadata.name = this.name;
 
-        // set ui fields
-        obj.metadata.name = this.name;
+        let isJSON = true;
+        try { JSON.parse(this.template) } catch { isJSON = false }
+        let override = new Object();
+        if (isJSON) {
+            override = JSON.parse(this.template);
+        } else {
+            override = yaml.parse(this.template);
+        }
+
+        // merge template and override
+        const obj = merge(template, override);
 
         const func = async function(msg: PayloadType) {
             // override name if specified
@@ -59,7 +74,7 @@ class NamespaceNode extends Node {
                 // to specify a different patch merge strategy in the content-type header.
                 //
                 // See: https://github.com/kubernetes/kubernetes/issues/97423
-                const response = await client.patchNamespace(obj.metadata.name, obj);
+                const response = await client.patchNamespace(obj.metadata.name, obj, undefined, undefined, undefined, undefined, undefined, { headers: { 'Content-Type': 'application/merge-patch+json' } });
                 msg.object = response.body;
 
                 this.status(utils.getNodeStatus(msg.object));

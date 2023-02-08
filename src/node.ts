@@ -7,8 +7,8 @@ export class Node implements Node {
         RED.nodes.createNode(this, config);
     }
 
-    static registerType(red: NodeAPI, type: string, opts?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-        RED = red;
+    static registerType(node: NodeAPI, type: string, opts?: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+        RED = node;
         RED.nodes.registerType(
             type,
             this.prototype.constructor as any, // eslint-disable-line @typescript-eslint/no-explicit-any
