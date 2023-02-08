@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/kube-red/kube-red.git"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A node-red node that supports interacting with kubernetes clusters (get, delete, create, list, watch, upsert)",
   "scripts": {
     "build": "npm run build-gulp",
@@ -89,6 +89,8 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.17.1",
     "@types/ws": "^8.5.3",
-    "test": "^3.2.1"
+    "lodash.merge": "^4.6.2",
+    "test": "^3.2.1",
+    "yaml": "^2.2.1"
   }
 }
